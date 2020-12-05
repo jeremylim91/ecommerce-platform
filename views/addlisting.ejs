@@ -1,0 +1,31 @@
+
+    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+  <body>
+    <%#-include('partials/navBar.ejs')%>
+    <section>
+      <form action='/addlisting' method='POST'>
+        <label for='fThumbnail'>Listing thumbnail:</label>
+        <input type='TEXT' name='fThumbnail' id='fThumbnail'>
+        <br>
+
+        <label for='fTitle'>Title</label>
+        <input type='TEXT' name='fTitle' id='fTitle'>
+        <br>
+        <label for='fPrice'>Price (SGD)</label>
+        <input type='TEXT' name='fPrice' id='fPrice'>
+        <br>
+        <label for='fDescription'>Description</label>
+        <input type='TEXT' name='fDescription' id='fDescription'>
+        <br>
+        <div>Options:</div>
+        <%options.forEach(element => {%>
+          <label for='fOptions'><%=element.name%></label>
+          <input type="checkbox" id ='fOptions' name='fOptions' value='<%=element.id%>'>
+        <%}); %>        
+      </form>
+  
+  </section>
+<%-include('partials/footer.ejs')%>
+    
+  </body>
+</html>

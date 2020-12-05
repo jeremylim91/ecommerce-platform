@@ -1,0 +1,39 @@
+    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+  <body>
+    <%#-include('partials/navBar.ejs')%>
+    <section>
+<div class='container'>
+  <div class= 'row'>
+      <div class= 'col'>
+        <div><%=productDetails.title%></div>
+      </div>
+  </div>
+  <div class= 'row'>
+      <div class= 'col'>
+        <div>$<%=productDetails.price%></div>
+      </div>
+  </div>
+  <div class= 'row'>
+      <div class= 'col'>
+        <div><%=productDetails.description%></div>
+      </div>
+  </div>
+  <div class= 'row'>
+      <div class= 'col'>
+        <form action='/products/<%=productDetails.id%>' method='post'>
+          <select name ='fProductOptions' id= 'fProductOptions'>
+              <%productOptions.forEach(element => { %>
+                <option value= "<%=element.id%>"><%=element.name%></option>
+               <% }); %>
+            </select>
+            <input type="submit" value="Add To Cart" />
+          </form>
+      </div>
+  </div>
+</div>
+  
+  </section>
+<%-include('partials/footer.ejs')%>
+    
+  </body>
+</html>

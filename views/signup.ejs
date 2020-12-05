@@ -1,0 +1,46 @@
+<%-include('partials/head.ejs', {stylesheet: '/signup.css'})%>
+<body>
+  <h1>Sign up for an account</h1>
+  <section>
+    <div class='container'>
+      <form action="/signup" method="POST">
+        <div class= 'row'>
+            <div class= 'col-2'>
+              <div>
+                <label for='fUsername'> Username: </label>
+              </div>
+            </div>
+            <div class= 'col'>
+              <div>
+                <input type='text' id='fUsername' name='fUsername'>
+              </div>
+            </div>
+        </div>
+        <div class= 'row'>
+            <div class= 'col-2'>
+              <div>
+                <label for='fPassword'> Password: </label>
+              </div>
+            </div>
+            <div class= 'col'>
+              <div>
+                <input type='text' id='fPassword' name='fPassword'>
+                <br>
+                <input type='checkbox' id='fisATeacher' name='fisATeacher' value='true'>
+                <label for='fisATeacher'>I am a teacher at this preschool</label>
+              </div>
+            </div>
+        </div>
+        <div class= 'row'>
+            <div class= 'col'>
+              <div>
+                <input type="submit" value="Sign up" />
+              </div>
+            </div>
+        </div>
+      </form>
+    </div>  
+  </section>
+<%-include('partials/footer.ejs')%>
+</body>
+</html>

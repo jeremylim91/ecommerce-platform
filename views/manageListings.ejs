@@ -1,0 +1,61 @@
+
+    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+  <body>
+    <%#-include('partials/navBar.ejs')%>
+    <section>
+    <div class='container'>
+      <div class='row'>
+        <div class='col'>
+          <h1>Title</h1>     
+        </div>
+      </div>
+      <div class='row'>
+          <div class='col-1'>
+            <div>Product id</div>
+          </div>
+          <div class='col-2'>
+            <div>Thumbnail</div>
+          </div>
+          <div class='col-2'>
+            <div>Title</div>
+          </div>
+          <div class='col-1'>
+            <div>Price</div>           
+          </div>
+          <div class='col-3'>
+            <div>Upload details</div>
+          </div>
+      </div>
+      <%dataToDisplay.forEach(element => {%>
+        <div class='row'>
+          <div class='col-1'>
+            <%=element.id%>
+          </div>
+          <div class='col-2'>
+            <%=element.thumbnail%>
+          </div>
+          <div class='col-2'>
+            <%=element.title%>
+          </div>
+          <div class='col-1'>
+            $<%=element.price%>
+          </div>
+          <div class='col-3'>
+            <%=element.create_at%>
+            <!-- should find a way to display which user created the listing -->
+          </div>
+          <div class='col'>
+            <form action= '/managelistings/<%=element.id%>/delete'>
+              
+            </form>
+          </div>
+         
+        </div>
+      <%}); %>
+    </div>
+  
+  </section>
+<%-include('partials/footer.ejs')%>
+    
+  </body>
+</html>
