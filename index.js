@@ -4,6 +4,7 @@ import pg from 'pg';
 import methodOverride from 'method-override';
 import cookieParser from 'cookie-parser';
 import jsSHA from 'jssha';
+import multer from 'multer';
 
 // Initialise the DB connection
 const { Pool } = pg;
@@ -19,6 +20,9 @@ const pool = new Pool(pgConnectionConfig);
 // initialise express
 const app = express();
 const PORT = 3004;
+
+// initialise multer: set the name of the multer upload directory
+const multerUpload = multer({ dest: 'uploads/' });
 
 // =========middleware configs===================
 
@@ -84,7 +88,7 @@ app.get('/', checkAuth, (req, res) => {
     res.status(403).send('sorry, please login to proceed');
     return;
   }
-  res.send('This is home');
+  res.render('home');
 });
 
 // Route description: user login page
@@ -92,7 +96,6 @@ app.get('/login', (req, res) => {
   console.log('received request to login');
   res.render('login.ejs');
 });
-
 app.post('/login', (req, res) => {
   console.log('received post request to login');
   // get the values from the form
@@ -143,7 +146,6 @@ app.get('/signup', (req, res) => {
   console.log('received get request to signup');
   res.render('signup.ejs');
 });
-
 app.post('/signup', (req, res) => {
   console.log('received post request to signup');
   // convert fIsATeacher into a boolean;
@@ -163,7 +165,7 @@ app.post('/signup', (req, res) => {
   const hashedPassword = shaObj.getHash('HEX');
 
   // set the sql query that stores the username and hashed password in the db;
-  const insertUserCredentials = 'INSERT INTO users (email, password, user_is_teacher) VALUES ($1, $2, $3) RETURNING *';
+  const insertUserCredentials = 'INSERT INTO users (email, password, is_teacher) VALUES ($1, $2, $3) RETURNING *';
   console.log(`sql query is: ${insertUserCredentials}`);
   // execute the query
   pool
@@ -178,10 +180,6 @@ app.post('/signup', (req, res) => {
 
 // Route description: view categories
 app.get('/categories', checkAuth, (req, res) => {
-  if (req.isUserLoggedIn === false) {
-    res.status(403).send('sorry, please login to proceed');
-    return;
-  }
   const queryForCategories = 'SELECT * FROM categories';
   pool.query(queryForCategories, (err, result) => {
     checkQueryErr(err, res);
@@ -193,11 +191,6 @@ app.get('/categories', checkAuth, (req, res) => {
 
 // Route description: view products in a specific category
 app.get('/categories/:categoryName', checkAuth, (req, res) => {
-  // prevent the user from access page if not logged in
-  if (req.isUserLoggedIn === false) {
-    res.status(403).send('sorry, please login to proceed');
-    return;
-  }
   // display all the products in a given category
   const { categoryName } = req.params;
   console.log('categoryName is:');
@@ -207,37 +200,43 @@ app.get('/categories/:categoryName', checkAuth, (req, res) => {
   pool
     .query(queryCategoryIdUsingCategoryName, [categoryName])
     .then((result) => {
-      console.log('then-1');
       const categoryId = result.rows[0].id;
+      console.log(categoryId);
 
-      const queryForProductsWithCatX = `SELECT * FROM products
-      INNER JOIN product_categories
-      ON products.id= product_categories.product_id
-      WHERE product_categories.category_id=$1`;
+      // const queryForProductsWithCatX = `SELECT * FROM products
+      // INNER JOIN product_categories
+      // ON products.id= product_categories.product_id
+      // WHERE product_categories.category_id=$1`;
+
+      const queryForProductsWithCatX = 'SELECT * FROM categories INNER JOIN products ON categories.id= products.category_id WHERE products.category_id=$1';
 
       return pool.query(queryForProductsWithCatX, [categoryId]);
     })
     .then((result) => {
-      console.log('then-2');
+      let dataToDisplay = {};
 
-      const dataToDisplay = result.rows;
-      console.table(dataToDisplay);
-      res.send(dataToDisplay);
+      const arrayOfProducts = result.rows;
+      const arrayOfUniqueProducts = [];
+      /* look through the array of products and filter out unique
+      products by their title (unsure of how it works) */
+      arrayOfProducts.filter((value, index, self) => self.findIndex((v) => v.title === value.title) === index).map((ele) => {
+        arrayOfUniqueProducts.push(ele);
+      });
+      dataToDisplay = arrayOfUniqueProducts;
+
+      console.log('dataToDisplay is:');
+      console.log(dataToDisplay);
+
+      res.render('categories-product', { dataToDisplay });
     })
     .catch((error) => console.log(error.stack));
 });
 
-// add customer's product order info into orders table
-
 // Route description: specific orders (view and submit )
 app.get('/products/:productId', checkAuth, (req, res) => {
-  // prevent the user from accessing page unless logged in
-  if (req.isUserLoggedIn === false) {
-    res.status(403).send('sorry, please login to proceed');
-    return;
-  }
   // set an object that holds all the data that will be renedered eventually
   const dataToDisplay = {};
+  // get data from req.params
   const { productId } = req.params;
   const queryProductById = 'SELECT * FROM products WHERE id=$1';
   pool
@@ -251,11 +250,16 @@ app.get('/products/:productId', checkAuth, (req, res) => {
       console.log(dataToDisplay);
 
       // set the sql query that gets the list of options that are relevant for this product
-      const queryProductXOptions = `SELECT * FROM options 
-      INNER JOIN product_options 
-      ON options.id=product_options.option_id 
-      WHERE product_options.product_id=$1`;
-      return pool.query(queryProductXOptions, [productId]);
+      // const queryProductXOptions = `SELECT * FROM options
+      // INNER JOIN product_options_inventory
+      // ON options.id=product_options_inventory.option_id
+      // WHERE product_options_inventory.product_id=$1`;
+      // return pool.query(queryProductXOptions, [productId]);
+      const queryProductXOptions = `SELECT * FROM options
+      INNER JOIN products
+      ON options.id=products.option_id
+      WHERE products.title=$1`;
+      return pool.query(queryProductXOptions, [productDetails.title]);
     })
     .then((result) => {
       const productOptions = result.rows;// multiple results expected, so don't specify row
@@ -267,25 +271,27 @@ app.get('/products/:productId', checkAuth, (req, res) => {
     .catch((error) => console.log(error.stack));
 });
 app.post('/products/:productId', checkAuth, (req, res) => {
-  // prevent user from accessing page unless logged in
-  if (req.isUserLoggedIn === false) {
-    res.status(403).send('sorry, please login to proceed');
-    return;
-  }
-  const { fProductOptions } = req.body;
+  const { fProductOptions, fProductTitle } = req.body;
   console.log('option id:');
   console.log(fProductOptions);
-  const { productId } = req.params;
-  // GET
-  // update the cart with this product
-  const queryToUpdateCart = 'INSERT INTO user_products (product_id) VALUES($1)';
-  pool
-    .query(queryToUpdateCart, [productId])
+  console.log('fProductTitle:');
+  console.log(fProductTitle);
+  // get the user id
+  const { userId } = req.cookies;
+
+  // set the query that looks for products.id based on the options & title of the user-selected item
+  const queryForProduct = `SELECT * FROM products WHERE title='${fProductTitle}' AND option_id=${fProductOptions}`;
+  // execute the query
+  pool.query(queryForProduct)
     .then((result) => {
-      // insert modal here
-      console.log('successfully added item to cart');
-      res.end();
-    });
+      console.table(result.rows);
+      // set the query to insert this product into the cart table
+      const insertProductIntoCart = 'INSERT INTO user_products_cart (user_id, product_id) VALUES ($1, $2)';
+      return pool.query(insertProductIntoCart, [userId, result.rows[0].id]);
+    }).then(() => {
+      res.send('added to cart');
+    })
+    .catch((error) => console.log(error.stack));
 });
 
 // Route description: view all listings and delete if nec
@@ -302,18 +308,236 @@ app.get('/manageListings', checkAuth, (req, res) => {
     .catch((error) => console.log(`Error:${error.stack}`));
 });
 
+// Route description:add new listings
 app.get('/addlisting', checkAuth, (req, res) => {
-  // get all the available options from options
+  // set an object variable that will hold the content to display
+  const dataToDisplay = {};
+
+  // query for all available options
   const queryForOptions = 'SELECT * FROM options';
   // execute the query
   pool
     .query(queryForOptions)
     .then((result) => {
       const options = result.rows;
-      res.render('addlisting', { options });
+      dataToDisplay.options = options;
+
+      // query for all avaialble categories categories
+      const queryForCategories = 'SELECT * FROM categories';
+      return pool.query(queryForCategories);
+    })
+    .then((result) => {
+      const categories = result.rows;
+      dataToDisplay.categories = categories;
+      console.log('final dataToDisplay is:');
+      console.log(dataToDisplay);
+      // get the ejs form
+      res.render('addlisting', dataToDisplay);
     })
     .catch((error) => console.log(error.stack));
-  // get the ejs form
+});
+app.post('/addlisting', checkAuth, (req, res) => {
+  // store the form data as variables
+  const {
+    fTitle, fPrice, fDescription, fThumbnail, fImage, fCategory,
+  } = req.body;
+  let { fOptions } = req.body;
+  console.log('fCategory is: ');
+  console.log(fCategory);
+
+  // ensure that the checkbox is an array even if only one checkbox was used
+  if (!Array.isArray(fOptions)) {
+    fOptions = [fOptions];
+  }
+  // update products with the listing details (new entry per option)
+  fOptions.forEach((element, index) => {
+    // set the query that inserts the data into products table
+    const insertIntoProducts = 'INSERT INTO products (title, description, price, thumbnail, image, category_id, option_id) VALUES ($1, $2, $3,$4, $5, $6, $7) RETURNING *';
+    const insertValues = [fTitle, fDescription, fPrice, fThumbnail, fImage, fCategory, fOptions[index]];
+    console.log('insertValues is:');
+    console.log(insertValues);
+    // execute the query
+    pool.query(insertIntoProducts, insertValues, (err, result) => {
+      if (err) {
+        console.log(`Err: ${err}`);
+      }
+      console.table(result.rows[0]);
+    });
+  });
+  res.redirect('/categories');
 });
 
+// Route description: view items in my cart
+app.get('/mycart', (req, res) => {
+// get the user's id
+  const { userId } = req.cookies;
+  // set the query to check the cart for all products relating to this user
+  const queryForCartItems = `SELECT products.id AS productsId, products.title, products.price, products.thumbnail, products.option_id, user_products_cart.id AS user_products_cartId, user_products_cart.user_id, user_products_cart.product_id, user_products_cart.order_id, user_products_cart.qty, user_products_cart.inside_cart, user_products_cart.order_placed, user_products_cart.order_status
+  FROM PRODUCTS
+  INNER JOIN user_products_cart 
+  ON products.id= user_products_cart.product_id
+  WHERE user_id=${userId} AND inside_cart=TRUE AND order_placed=FALSE`;
+  // execute the query
+  pool.query(queryForCartItems)
+    .then((result) => {
+      const cartItems = result.rows;
+      console.table(cartItems);
+      const dataToDisplay = { cartItems };
+      res.render('mycart', dataToDisplay);
+    })
+    .catch((error) => console.log(error.stack));
+});
+app.post('/mycart', (req, res) => {
+  console.log(' received post request for /mycart');
+  const { fCartItems } = req.body;
+  console.log('fCartItems are:');
+  console.log(fCartItems);
+
+  res.redirect('/mycart/review');
+});
+
+// Route description: review items in cart
+app.post('/mycart/review', (req, res) => {
+  console.log(' received post request for /mycart/review');
+  let { fCartItems } = req.body;
+  // if the user did not check any items, tell them to do so
+  if (fCartItems === undefined) {
+    res.send('Please choose at least one item to proceed');
+    return;
+  }
+  // ensure that fCartItems yields an array even if it's only one checkbox
+  if (Array.isArray(fCartItems) === false) {
+    fCartItems = [fCartItems];
+  }
+  console.log(`fcartItems: ${fCartItems}`);
+  // set a variable for the total price of items in the cart
+  const totalPrice = 0;
+
+  // set an object variable to hold the data to display
+  const dataToDisplay = { totalPrice };
+  dataToDisplay.cartItems = [];
+
+  // set the sql query that retrieves the items in fCartItems
+  fCartItems.forEach((element, index) => {
+    const queryForItems = `SELECT * FROM products WHERE id= ${element}`;
+    pool.query(queryForItems, (err, result) => {
+      if (err) {
+        console.log(err);
+      }
+      dataToDisplay.cartItems.push(result.rows[0]);
+      dataToDisplay.totalPrice += result.rows[0].price;
+      console.log(`index= ${index}`);
+      if (fCartItems.length - 1 === index) {
+        console.log('data to display is:');
+        console.log(dataToDisplay);
+        res.render('mycart-review', dataToDisplay);
+      }
+    });
+  });
+});
+app.post('/mycart/review/pay', (req, res) => {
+  console.log('received post request to mycart/review/pay');
+  // get the order number
+  let { fCartItems } = req.body;
+  if (Array.isArray(fCartItems) === false) {
+    fCartItems = [fCartItems];
+  }
+  console.log(fCartItems);
+  // set a variable to hold the date in the forEach loop below:
+  const details = [];
+  const userOrderData = { details };
+  // add a new order into the orders table
+  const insertNewOrder = 'INSERT INTO orders (user_id) VALUES ($1) RETURNING *';
+  pool
+    .query(insertNewOrder, [req.cookies.userId])
+    .then((result) => {
+      const orderId = result.rows[0].id;
+      console.log(orderId);
+      // set the query to update user_products that the respective product IDs
+      fCartItems.forEach((element) => {
+        const createOrderAndUpdateOrderStatus = `UPDATE user_products_cart
+        SET
+        order_id= ${orderId},
+        order_placed= ${true},
+        order_status= 'pending payment',
+        inside_cart= ${false}
+        
+        WHERE 
+        user_id=  ${req.cookies.userId} AND
+        inside_cart= true AND
+        product_id = ${element}
+        RETURNING * 
+        `;
+        pool.query(createOrderAndUpdateOrderStatus, (err, createOrderResult) => {
+          if (err) { console.log(err); }
+          userOrderData.details.push(createOrderResult.rows[0]);
+          console.log('userOrderData is:');
+          console.log(userOrderData);
+        });
+      });
+      console.table(userOrderData);
+      res.redirect(`/payment/${orderId}`);
+    })
+    .catch((error) => console.log(error.stack));
+  // res.send('Please proceed to payment');
+});
+
+// Route description: allow user to upload paynow details
+app.get('/payment/:orderId', (req, res) => {
+  const { orderId } = req.params;
+  console.log('received get request for payment/:orderId');
+  console.log(`order id is: ${orderId}`);
+
+  // authenticate that the current user matches the order in the orders table
+  // Step1: set the query to call out details matching the orderId
+  const orderDetails = `SELECT * FROM orders WHERE id=${orderId}`;
+  // step 2: execute the query
+  pool.query(orderDetails)
+    .then((result) => {
+      const userIdAttachedToOrder = result.rows[0].user_id;
+      console.log('userIdAttachedToOrder is:');
+      console.log(userIdAttachedToOrder);
+      // const userIdFromBrowser = Number(req.cookies.userId);
+      let { userId: userIdFromCookies } = req.cookies;
+      userIdFromCookies = Number(userIdFromCookies);
+      console.log('userId from cookies is:');
+      console.log(userIdFromCookies);
+      // step3: compare the details with req.cookies.userId
+      if (userIdAttachedToOrder === userIdFromCookies) {
+        console.log('credentials are valid to access this order');
+        // allow the user to upload photos of his/her paynow transaction
+        res.render('payment-orderid', { orderId });
+      } else {
+        /* step4: if not the same, send message that there seems to be something
+      wrong with the order: User not match order ID */
+        res.send('Sorry, it appears that there has been an error: user Id does not match order Id');
+      }
+    })
+    .catch((error) => (error.stack));
+});
+
+app.post('/payment/:orderId', multerUpload.single('fPaymentDetails'), (req, res) => {
+  const { orderId } = req.params;
+  console.log(orderId);
+  // set the update query to update the appropriate order id with the payment info
+  const updateOrderWithPhoto = `UPDATE orders
+  SET 
+  proof_of_payment = '${req.file.filename}'
+  WHERE 
+  id=${orderId}
+  RETURNING *
+  `;
+  pool.query(updateOrderWithPhoto, (err, result) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    console.table(result.rows);
+    res.send('Payment details successfully updated');
+  });
+});
+
+// app.get('/myorders', (req, res) => {
+
+// });
 app.listen(PORT);

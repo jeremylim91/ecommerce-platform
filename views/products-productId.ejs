@@ -23,9 +23,10 @@
         <form action='/products/<%=productDetails.id%>' method='post'>
           <select name ='fProductOptions' id= 'fProductOptions'>
               <%productOptions.forEach(element => { %>
-                <option value= "<%=element.id%>"><%=element.name%></option>
+                <option value= "<%=element.option_id%>"><%=element.name%></option>
                <% }); %>
             </select>
+            <input type='hidden' name='fProductTitle' id='fProductTitle' value='<%=productDetails.title%>'>
             <input type="submit" value="Add To Cart" />
           </form>
       </div>

@@ -1,0 +1,47 @@
+
+    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+  <body>
+    <%#-include('partials/navBar.ejs')%>
+    <div class='container'>
+      <div class='row'>
+        <div class='col'>
+          <h2>Confirm items to checkout:</h2>          
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-1'>
+                     
+        </div>
+        <div class='col'>
+          Items     
+        </div>
+        <div class='col'>
+          Price (SGD)      
+        </div>
+      </div>
+      
+      <form action='/mycart/review' method='POST'>
+        <%cartItems.forEach(element => {%>
+          <div class='row'>
+            <div class='col-1'>
+              <input type='checkbox' id='fCartItems<%=element.product_id%>' name='fCartItems' value='<%=element.product_id%>'>
+            </div>
+            <div class='col'>
+              <label for='fCartItems<%=element.product_id%>'> <%=element.title%></label>          
+            </div>
+            <div class='col'>
+              <%=element.price%> 
+            </div>
+          </div>
+        <%}); %>
+      <div class='row'>
+        <div class='col'>
+          <input type='submit' value='Review order'>
+        </div>
+      </div>
+        </form>
+    </div>
+<%-include('partials/footer.ejs')%>
+    
+  </body>
+</html>

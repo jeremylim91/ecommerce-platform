@@ -1,0 +1,56 @@
+
+    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+  <body>
+
+    <%#-include('partials/navBar.ejs')%>
+    <div class='container'>
+      <div class='row'>
+        <div class='col'>
+          <h2>Review order:</h2>          
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-1'>
+                     
+        </div>
+        <div class='col'>
+          Items     
+        </div>
+        <div class='col'>
+          Price (SGD)      
+        </div>
+      </div>
+      
+        <%cartItems.forEach(element => {%>
+          <div class='row'>
+            <div class='col-1'>
+              <li></li>
+            </div>
+            <div class='col'>
+              <label for='fCartItems<%=element.product_id%>'> <%=element.title%></label>          
+            </div>
+            <div class='col'>
+              <%=element.price%> 
+            </div>
+          </div>
+        <%}); %>
+      <div class='row'>
+        <div class='col'>
+          Order total: $<%= totalPrice %> 
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col'>
+          <form action='/mycart/review/pay' method='POST'>
+            <%cartItems.forEach(element => {%>
+              <input type='hidden' name='fCartItems' value='<%= element.id %>'> 
+            <%}); %>
+            <input type='submit' value='Order'>
+          </form>
+        </div>
+      </div>
+    </div>
+<%-include('partials/footer.ejs')%>
+    
+  </body>
+</html>

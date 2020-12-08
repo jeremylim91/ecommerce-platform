@@ -7,6 +7,9 @@
         <label for='fThumbnail'>Listing thumbnail:</label>
         <input type='TEXT' name='fThumbnail' id='fThumbnail'>
         <br>
+        <label for='fImage'>Listing image:</label>
+        <input type='TEXT' name='fImage' id='fImage'>
+        <br>
 
         <label for='fTitle'>Title</label>
         <input type='TEXT' name='fTitle' id='fTitle'>
@@ -19,9 +22,20 @@
         <br>
         <div>Options:</div>
         <%options.forEach(element => {%>
-          <label for='fOptions'><%=element.name%></label>
-          <input type="checkbox" id ='fOptions' name='fOptions' value='<%=element.id%>'>
-        <%}); %>        
+          <label for='fOptions<%=element.id%>'><%=element.name%></label>
+          <input type="checkbox" id ='fOptions<%=element.id%>' name='fOptions' value='<%=element.id%>'>
+        <%}); %>       
+        <br> 
+        
+        <label for='fCategory'>Choose a category: </label>
+        <select name ='fCategory' id= 'fCategory'>
+              <%categories.forEach(element => { %>
+                <option value='<%=element.id%>'><%=element.name%></option>
+             <% }); %>
+        </select> 
+
+        <br> 
+        <input type="submit" value="submit">
       </form>
   
   </section>
