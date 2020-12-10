@@ -29,6 +29,8 @@ const multerUpload = multer({ dest: 'uploads/' });
 app.set('view engine', 'ejs');
 // config to allow use of external CSS stylesheets
 app.use(express.static('public'));
+// config to allow file uploads from the 'uploads' folder
+app.use(express.static('uploads'));
 // config to accept request form data
 app.use(express.urlencoded({ extended: false }));
 // config to allow use of method override with POST having ?_method=PUT
@@ -114,7 +116,8 @@ app.post('/login', (req, res) => {
       // get the hashed value as output from the SHA object
       const hashedPassword = shaObj.getHash('HEX');
 
-      // If the user's hashed password in the database does not match the hashed input password, login fails
+      /* If the user's hashed password in the database does not
+       match the hashed input password, login fails */
       if (user.password !== hashedPassword) {
       // the error for incorrect email and incorrect password are the same for security reasons.
       // This is to prevent detection of whether a user has an account for a given service.
@@ -336,16 +339,20 @@ app.get('/addlisting', checkAuth, (req, res) => {
     })
     .catch((error) => console.log(error.stack));
 });
-app.post('/addlisting', checkAuth, (req, res) => {
+app.post('/addlisting', checkAuth, multerUpload.fields([{ name: 'fThumbnail', maxCount: 1 }, { name: 'fImage', maxCount: 1 }]), (req, res) => {
   // store the form data as variables
   const {
-    fTitle, fPrice, fDescription, fThumbnail, fImage, fCategory,
+    fTitle, fPrice, fDescription, fCategory,
   } = req.body;
+
+  const fThumbnail = req.files.fThumbnail[0].filename;
+
+  const fImage = req.files.fImage[0].filename;
   let { fOptions } = req.body;
   console.log('fCategory is: ');
   console.log(fCategory);
 
-  // ensure that the checkbox is an array even if only one checkbox was used
+  // ensure that the form's checkbox produces an array even if only one checkbox was used
   if (!Array.isArray(fOptions)) {
     fOptions = [fOptions];
   }
@@ -354,6 +361,7 @@ app.post('/addlisting', checkAuth, (req, res) => {
     // set the query that inserts the data into products table
     const insertIntoProducts = 'INSERT INTO products (title, description, price, thumbnail, image, category_id, option_id) VALUES ($1, $2, $3,$4, $5, $6, $7) RETURNING *';
     const insertValues = [fTitle, fDescription, fPrice, fThumbnail, fImage, fCategory, fOptions[index]];
+
     console.log('insertValues is:');
     console.log(insertValues);
     // execute the query
@@ -372,11 +380,12 @@ app.get('/mycart', (req, res) => {
 // get the user's id
   const { userId } = req.cookies;
   // set the query to check the cart for all products relating to this user
-  const queryForCartItems = `SELECT products.id AS productsId, products.title, products.price, products.thumbnail, products.option_id, user_products_cart.id AS user_products_cartId, user_products_cart.user_id, user_products_cart.product_id, user_products_cart.order_id, user_products_cart.qty, user_products_cart.inside_cart, user_products_cart.order_placed, user_products_cart.order_status
+  const queryForCartItems = `SELECT products.id AS productsId, products.title, products.price, products.thumbnail, products.option_id, user_products_cart.id AS user_products_cartId, user_products_cart.product_id, user_products_cart.order_id, user_products_cart.qty, user_products_cart.inside_cart, user_products_cart.order_placed, user_products_cart.order_status_id
   FROM PRODUCTS
   INNER JOIN user_products_cart 
   ON products.id= user_products_cart.product_id
   WHERE user_id=${userId} AND inside_cart=TRUE AND order_placed=FALSE`;
+
   // execute the query
   pool.query(queryForCartItems)
     .then((result) => {
@@ -459,7 +468,7 @@ app.post('/mycart/review/pay', (req, res) => {
         SET
         order_id= ${orderId},
         order_placed= ${true},
-        order_status= 'pending payment',
+        order_status_id= 2,
         inside_cart= ${false}
         
         WHERE 
@@ -536,8 +545,61 @@ app.post('/payment/:orderId', multerUpload.single('fPaymentDetails'), (req, res)
     res.send('Payment details successfully updated');
   });
 });
+// Route description: view all orders
+app.get('/manageOrders', (req, res) => {
+// limit this page to only users that  is_teacher===true
+// step1: get the current user's id from the cookies
+  const { userId: currentUserId } = req.cookies;
+  console.log(currentUserId);
+  // step 2: use the current user's id to query the databsae
+  const queryForUser = `SELECT * FROM users WHERE id=${currentUserId}`;
+  pool
+    .query(queryForUser)
+    .then((result) => {
+      /* step 3: if the user has is_teacher set to be false, send message to say that
+      they don't have access to this page */
+      console.log(result.rows[0].is_teacher);
+      if (result.rows[0].is_teacher === false) {
+        res.send('sorry, you don\'t have permissions to view this page');
+        return;
+      }
+      // query into database to retrieve all orders that are active
+      const getAllActiveOrders = `SELECT orders.id AS orderId, orders.user_id, orders.create_at, orders.proof_of_payment, user_products_cart.id AS user_products_cartId, user_products_cart.user_id, user_products_cart.product_id, user_products_cart.order_id, user_products_cart.qty, user_products_cart.inside_cart, user_products_cart.order_placed, user_products_cart.order_status_id, products.id AS productId, products.title, products.description, products.price, products.thumbnail, products.image, products.category_id, products.option_id, options.id AS optionId, options.name AS optionName
+        FROM orders
 
-// app.get('/myorders', (req, res) => {
+        INNER JOIN user_products_cart on orders.id= user_products_cart.product_id
 
-// });
+        INNER JOIN products on user_products_cart.order_id= products.id
+
+        INNER JOIN options on products.option_id= options.id
+
+        WHERE order_placed= true`;
+      return pool.query(getAllActiveOrders);
+    })
+    .then((result) => {
+      const dataToDisplay = result.rows;
+      res.render('manageorders', { dataToDisplay });
+    })
+    .catch((err) => console.log(err.stack));
+});
+// Route description: acknowledge payment
+
+app.post('/manageorder/:orderId/paid', (req, res) => {
+  const { orderId } = req.params;
+  // set the update query to update user_products.order_status_id to 4/'paid'
+  const updateOrderStatus = `UPDATE user_products_cart
+  SET
+  order_status_id= 4,
+  inside_cart='false'
+  WHERE
+  order_id=${orderId}
+  RETURNING *
+  `;
+  pool
+    .query(updateOrderStatus)
+    .then((result) => {
+      console.table(result.rows);
+    })
+    .catch((error) => console.log(error.stack));
+});
 app.listen(PORT);

@@ -6,8 +6,15 @@ CREATE TABLE "user_products_cart" (
   "qty" INT,
   "inside_cart" BOOLEAN DEFAULT TRUE,
   "order_placed" BOOLEAN DEFAULT FALSE,
-  "order_status" TEXT DEFAULT 'Added To Cart'
+  "order_status_id" INT DEFAULT 1
 );
+
+CREATE TABLE IF NOT EXISTS "order_status" (
+  "id" SERIAL PRIMARY KEY,
+  "title" TEXT,
+  "remarks" TEXT
+);
+
 
 -- CREATE TABLE IF NOT EXISTS "product_orders" (
 --   "id" SERIAL PRIMARY KEY,

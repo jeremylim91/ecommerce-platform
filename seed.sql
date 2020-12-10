@@ -27,6 +27,18 @@ VALUES('Medium');
 INSERT INTO options (name)
 VALUES('Large');
 
+INSERT INTO order_status (title, remarks)
+VALUES('Added to Cart', 'Customer has added item to cart, but has not checked-out the item');
+INSERT INTO order_status (title, remarks)
+VALUES('Pending Payment', 'Customer has checked-out the item but has yet to make payment');
+INSERT INTO order_status (title, remarks)
+VALUES('Pending Ack', 'Customer has paid, awaiting administrator''s acknowledgement of payment');
+INSERT INTO order_status (title, remarks)
+VALUES('Completed', 'Payment has been ack + item has been delivered');
+INSERT INTO order_status (title, remarks)
+VALUES('Deleted', 'This order has been deleted');
+
+
 -- INSERT INTO product_options_inventory(product_id, option_id)
 -- VALUES (1,1); --boys uniform, size s
 -- INSERT INTO product_options_inventory(product_id, option_id)
@@ -63,3 +75,4 @@ INSERT INTO users (email, password, is_teacher)
 VALUES ('tester2@tester.com', 'bc547750b92797f955b36112cc9bdd5cddf7d0862151d03a167ada8995aa24a9ad24610b36a68bc02da24141ee51670aea13ed6469099a4453f335cb239db5da', FALSE);
 INSERT INTO users (email, password, is_teacher)
 VALUES ('tester3@tester.com', 'bc547750b92797f955b36112cc9bdd5cddf7d0862151d03a167ada8995aa24a9ad24610b36a68bc02da24141ee51670aea13ed6469099a4453f335cb239db5da', FALSE);
+

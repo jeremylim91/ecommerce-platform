@@ -3,22 +3,22 @@
   <body>
     <%#-include('partials/navBar.ejs')%>
     <section>
-      <form action='/addlisting' method='POST'>
+      <form action='/addlisting' method='POST' enctype='multipart/form-data'>
         <label for='fThumbnail'>Listing thumbnail:</label>
-        <input type='TEXT' name='fThumbnail' id='fThumbnail'>
+        <input type='file' name='fThumbnail' id='fThumbnail' accept='image/*' required>
         <br>
         <label for='fImage'>Listing image:</label>
-        <input type='TEXT' name='fImage' id='fImage'>
+        <input type='file' name='fImage' id='fImage' accept='image/*' required>
         <br>
 
         <label for='fTitle'>Title</label>
-        <input type='TEXT' name='fTitle' id='fTitle'>
+        <input type='TEXT' name='fTitle' id='fTitle' required>
         <br>
         <label for='fPrice'>Price (SGD)</label>
-        <input type='TEXT' name='fPrice' id='fPrice'>
+        <input type='TEXT' name='fPrice' id='fPrice' required>
         <br>
         <label for='fDescription'>Description</label>
-        <input type='TEXT' name='fDescription' id='fDescription'>
+        <input type='TEXT' name='fDescription' id='fDescription' required>
         <br>
         <div>Options:</div>
         <%options.forEach(element => {%>
