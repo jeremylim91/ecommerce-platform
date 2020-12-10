@@ -6,7 +6,8 @@ CREATE TABLE "user_products_cart" (
   "qty" INT,
   "inside_cart" BOOLEAN DEFAULT TRUE,
   "order_placed" BOOLEAN DEFAULT FALSE,
-  "order_status_id" INT DEFAULT 1
+  "order_status_id" INT DEFAULT 1,
+  "create_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS "order_status" (
@@ -34,8 +35,8 @@ CREATE TABLE IF NOT EXISTS "users" (
 CREATE TABLE IF NOT EXISTS "orders" (
   "id" SERIAL PRIMARY KEY,
   "user_id" INT,
-  "create_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  "proof_of_payment" TEXT
+  "proof_of_payment" TEXT,
+  "create_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS "products" (
