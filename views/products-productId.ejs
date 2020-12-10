@@ -1,46 +1,73 @@
-    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+    <%-include('partials/head.ejs', {stylesheet: '/products-productId.css'})%>
   <body>
-    <%#-include('partials/navBar.ejs')%>
-    <section>
-<div class='container'>
-  <div class= 'row'>
-      <div class= 'col'>
-        <img src="/<%=productDetails.thumbnail%>" alt='img of <%=productDetails.thumbnail%>'>
-        <!-- <img src='/<%#=element.proof_of_payment%>'/> -->
-
+    <%-include('partials/navBar.ejs')%>
+    <main>
+      <div class='container'>
+        <div class= 'row'>
+        <div class= 'col' id='thumbnaiHolder' >
+            <div id="carouselExampleControls" class="carousel slide" data-interval="false">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+              <img class="d-block w-100 "src="/<%=productDetails.thumbnail%>" alt='img of <%=productDetails.thumbnail%>'>
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100"src="/<%=productDetails.image%>" alt='img of <%=productDetails.image%>'>
+          </div>
+          </div>
+            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        
+        </div>
+        <div class='col-sm-12 col-lg-9' >
+          <div class= 'row'>
+            <div class= 'col'>
+              <div>$<%=productDetails.price%></div>
+            </div>
+        </div>
+        <div class= 'row'>
+            <div class= 'col' id='titleCol'>
+              <div><%=productDetails.title%></div>
+            </div>
+        </div>
+      
+        <div class= 'row'>
+            <div class= 'col' id='descriptionCol'>
+              <div class='subheading'>Product details:</div>
+              <div><%=productDetails.description%></div>
+            </div>
+        </div>
+        <div class= 'row'>
+            <div class= 'col-sm-2' id='optionsCol'>
+              <div class='subheading' >Variations:</div>
+              </div>
+              <div class='col-sm-8'>
+              <form action='/products/<%=productDetails.id%>' method='post'>
+                <select class ='form-control' name ='fProductOptions' id= 'fProductOptions'>
+                    <%productOptions.forEach(element => { %>
+                      <option value= "<%=element.option_id%>"><%=element.name%></option>
+                    <% }); %>
+                  </select>
+                  <input type='hidden' name='fProductTitle' id='fProductTitle' value='<%=productDetails.title%>'> 
+            </div>
+            </div>
+          <div class='row'>
+            <div class='col' id='addToCartCol'>
+                  <input type="submit" class="btn btn-primary" value="Add To Cart" />
+                </form>
+            </div>
+          </div>
+            </div>
       </div>
-  </div>
-  <div class= 'row'>
-      <div class= 'col'>
-        <div><%=productDetails.title%></div>
-      </div>
-  </div>
-  <div class= 'row'>
-      <div class= 'col'>
-        <div>$<%=productDetails.price%></div>
-      </div>
-  </div>
-  <div class= 'row'>
-      <div class= 'col'>
-        <div><%=productDetails.description%></div>
-      </div>
-  </div>
-  <div class= 'row'>
-      <div class= 'col'>
-        <form action='/products/<%=productDetails.id%>' method='post'>
-          <select name ='fProductOptions' id= 'fProductOptions'>
-              <%productOptions.forEach(element => { %>
-                <option value= "<%=element.option_id%>"><%=element.name%></option>
-               <% }); %>
-            </select>
-            <input type='hidden' name='fProductTitle' id='fProductTitle' value='<%=productDetails.title%>'>
-            <input type="submit" value="Add To Cart" />
-          </form>
-      </div>
-  </div>
 </div>
   
-  </section>
+  </main>
 <%-include('partials/footer.ejs')%>
     
   </body>

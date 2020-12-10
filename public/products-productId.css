@@ -1,0 +1,55 @@
+img {
+  width: 40%;
+}
+
+.carousel-inner {
+  width: 100%;
+  height: 400px;
+}
+
+.container {
+  margin: auto;
+}
+.row {
+  border-bottom: solid rgb(218, 218, 218);
+  border-width: 0.2rem;
+}
+
+.col {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+}
+
+#descriptionCol {
+  display: block;
+}
+.subheading {
+  color: rgb(91, 91, 91);
+  display: block;
+}
+
+#thumbnaiHolder {
+  display: flex;
+  justify-content: center;
+  background-image: url("https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png");
+  background-size: 3%;
+  background-repeat: repeat;
+}
+#addToCartCol {
+  display: flex;
+  justify-content: center;
+}
+
+/* If screen size is more than 600px wide, set the font-size of <div> to 80px */
+@media screen and (min-width: 600px) {
+  .container {
+    margin-top: 20px;
+    border: solid #dadada;
+    border-width: 0.2rem;
+  }
+  .carousel-inner {
+    display: flex;
+    align-items: center;
+  }
+}

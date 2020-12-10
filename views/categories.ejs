@@ -1,15 +1,15 @@
 
     <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
   <body>
-    <%#-include('partials/navBar.ejs')%>
-    <section>
+    <%-include('partials/navBar.ejs')%>
+    <main>
    <%dataToDisplay.forEach(element => {%>
     <div><%=element.thumbnail%></div>
     <a href="/categories/<%=element.name%>"><%=element.name%></a>  
      <br/><br>
     <%}); %>
   
-  </section>
+  </main>
 <%-include('partials/footer.ejs')%>
     
   </body>

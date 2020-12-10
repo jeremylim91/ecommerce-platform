@@ -376,7 +376,7 @@ app.post('/addlisting', checkAuth, multerUpload.fields([{ name: 'fThumbnail', ma
 });
 
 // Route description: view items in my cart
-app.get('/mycart', (req, res) => {
+app.get('/mycart', checkAuth, (req, res) => {
 // get the user's id
   const { userId } = req.cookies;
   // set the query to check the cart for all products relating to this user
@@ -396,7 +396,7 @@ app.get('/mycart', (req, res) => {
     })
     .catch((error) => console.log(error.stack));
 });
-app.post('/mycart', (req, res) => {
+app.post('/mycart', checkAuth, (req, res) => {
   console.log(' received post request for /mycart');
   const { fCartItems } = req.body;
   console.log('fCartItems are:');
@@ -406,7 +406,7 @@ app.post('/mycart', (req, res) => {
 });
 
 // Route description: review items in cart
-app.post('/mycart/review', (req, res) => {
+app.post('/mycart/review', checkAuth, (req, res) => {
   console.log(' received post request for /mycart/review');
   let { fCartItems } = req.body;
   // if the user did not check any items, tell them to do so
@@ -444,7 +444,7 @@ app.post('/mycart/review', (req, res) => {
     });
   });
 });
-app.post('/mycart/review/pay', (req, res) => {
+app.post('/mycart/review/pay', checkAuth, (req, res) => {
   console.log('received post request to mycart/review/pay');
   // get the order number
   let { fCartItems } = req.body;
@@ -492,7 +492,7 @@ app.post('/mycart/review/pay', (req, res) => {
 });
 
 // Route description: allow user to upload paynow details
-app.get('/payment/:orderId', (req, res) => {
+app.get('/payment/:orderId', checkAuth, (req, res) => {
   const { orderId } = req.params;
   console.log('received get request for payment/:orderId');
   console.log(`order id is: ${orderId}`);
@@ -525,7 +525,7 @@ app.get('/payment/:orderId', (req, res) => {
     .catch((error) => (error.stack));
 });
 
-app.post('/payment/:orderId', multerUpload.single('fPaymentDetails'), (req, res) => {
+app.post('/payment/:orderId', checkAuth, multerUpload.single('fPaymentDetails'), (req, res) => {
   const { orderId } = req.params;
   console.log(orderId);
   // set the update query to update the appropriate order id with the payment info
@@ -546,7 +546,7 @@ app.post('/payment/:orderId', multerUpload.single('fPaymentDetails'), (req, res)
   });
 });
 // Route description: view all orders
-app.get('/manageOrders', (req, res) => {
+app.get('/manageOrders', checkAuth, (req, res) => {
 // limit this page to only users that  is_teacher===true
 // step1: get the current user's id from the cookies
   const { userId: currentUserId } = req.cookies;
@@ -567,7 +567,7 @@ app.get('/manageOrders', (req, res) => {
       const getAllActiveOrders = `SELECT orders.id AS orderId, orders.user_id, orders.create_at, orders.proof_of_payment, user_products_cart.id AS user_products_cartId, user_products_cart.user_id, user_products_cart.product_id, user_products_cart.order_id, user_products_cart.qty, user_products_cart.inside_cart, user_products_cart.order_placed, user_products_cart.order_status_id, products.id AS productId, products.title, products.description, products.price, products.thumbnail, products.image, products.category_id, products.option_id, options.id AS optionId, options.name AS optionName
         FROM orders
 
-        INNER JOIN user_products_cart on orders.id= user_products_cart.product_id
+        INNER JOIN user_products_cart on orders.id= user_products_cart.order_id
 
         INNER JOIN products on user_products_cart.order_id= products.id
 
@@ -584,7 +584,7 @@ app.get('/manageOrders', (req, res) => {
 });
 // Route description: acknowledge payment
 
-app.post('/manageorder/:orderId/paid', (req, res) => {
+app.post('/manageorder/:orderId/paid', checkAuth, (req, res) => {
   const { orderId } = req.params;
   // set the update query to update user_products.order_status_id to 4/'paid'
   const updateOrderStatus = `UPDATE user_products_cart
@@ -602,4 +602,34 @@ app.post('/manageorder/:orderId/paid', (req, res) => {
     })
     .catch((error) => console.log(error.stack));
 });
+
+app.get('/myorders', checkAuth, (req, res) => {
+  const dataToDisplay = {};
+  // display all current orders
+  const allCurentOrders = `SELECT * FROM user_products_cart WHERE
+  user_id= ${req.cookies.userId} AND
+  order_status_id=2 OR
+  order_status_id=3`;
+  pool.query(allCurentOrders)
+    .then((result) => {
+      dataToDisplay.currentOrders = result.rows;
+      // display all past orders
+      const allPastOrders = `SELECT * FROM user_products_cart WHERE
+  user_id= ${req.cookies.userId} AND
+  order_status_id=4`;
+      return pool.query(allPastOrders);
+    })
+    .then((result) => {
+      dataToDisplay.pastOrders = result.rows;
+      res.send(dataToDisplay);
+    })
+    .catch((error) => console.log(error.stack));
+});
+
+app.get('/logout', checkAuth, (req, res) => {
+  res.clearCookie('userId');
+  res.clearCookie('loggedIn');
+  res.redirect('/login');
+});
+
 app.listen(PORT);

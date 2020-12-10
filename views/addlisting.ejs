@@ -1,8 +1,9 @@
 
     <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
   <body>
-    <%#-include('partials/navBar.ejs')%>
-    <section>
+      <%-include('partials/navBar.ejs')%>
+
+    <main>
       <form action='/addlisting' method='POST' enctype='multipart/form-data'>
         <label for='fThumbnail'>Listing thumbnail:</label>
         <input type='file' name='fThumbnail' id='fThumbnail' accept='image/*' required>
@@ -38,7 +39,7 @@
         <input type="submit" value="submit">
       </form>
   
-  </section>
+  </main>
 <%-include('partials/footer.ejs')%>
     
   </body>

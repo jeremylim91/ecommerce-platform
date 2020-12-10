@@ -1,16 +1,34 @@
 
-    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+    <%-include('partials/head.ejs', {stylesheet: '/categories-product.css'})%>
   <body>
-    <%#-include('partials/navBar.ejs')%>
-    <section>
-   <%dataToDisplay.forEach(element => {%>
-    <div><%=element.thumbnail%></div>
-    <a href="/products/<%=element.id%>"><%=element.title%></a>  
-     <br/><br>
-    <%}); %>
+    <%-include('partials/navBar.ejs')%>
+    <main>
+      <div class='container'>
+        <div class='row'>
+          <div class='col-3'>
+            Products by Category: <%#= dataToDisplay[0].cate %> 
+          </div>
+        </div>
+        <div class='row'>
+          <%dataToDisplay.forEach(element => {%>
+            <div class='col'>
+              
+              <div class="card">
+               <img class="card-img-top" src="/<%=element.thumbnail%>" alt="Card image">
+                  <div class="card-body">
+                   <h4 class="card-title"><%=element.title%></h4>
+                   <p class="card-text"><%=element.description%></p>
+                   <a href="/products/<%=element.id%>" class="btn btn-primary">Details</a>
+                  </div>
+              </div>
+            </div>
+            <%}); %>
+        </div>
+      </div>
   
-  </section>
+  </main>
 <%-include('partials/footer.ejs')%>
     
   </body>
 </html>
+

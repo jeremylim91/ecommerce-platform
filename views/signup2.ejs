@@ -1,6 +1,7 @@
 <%-include('partials/head.ejs', {stylesheet: '/signup.css'})%>
 <body>
-  <section>
+  <%-include('partials/navBar.ejs')%>
+  <main>
     <div class='container'>
       <form action="/signup" method="POST">
         <div class= 'row'>
@@ -36,7 +37,7 @@
         </div>
       </form>
     </div>  
-  </section>
+  </main>
 <%-include('partials/footer.ejs')%>
 </body>
 </html>

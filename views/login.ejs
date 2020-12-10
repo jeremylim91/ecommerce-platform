@@ -1,7 +1,8 @@
 <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
   <body>
+    <%-include('partials/navBar.ejs')%>
+    <main>
     <h1>Login</h1>
-    <%#-include('partials/navBar.ejs')%>
     <section>
 <div class='container'>
   <form action='/login' method='POST'>
@@ -40,6 +41,7 @@
 </div>
   
   </section>
+  </main>
 <%-include('partials/footer.ejs')%>
     
   </body>
