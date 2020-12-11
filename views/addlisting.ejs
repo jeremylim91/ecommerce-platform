@@ -4,41 +4,89 @@
       <%-include('partials/navBar.ejs')%>
 
     <main>
-      <form action='/addlisting' method='POST' enctype='multipart/form-data'>
-        <label for='fThumbnail'>Listing thumbnail:</label>
-        <input type='file' name='fThumbnail' id='fThumbnail' accept='image/*' required>
-        <br>
-        <label for='fImage'>Listing image:</label>
-        <input type='file' name='fImage' id='fImage' accept='image/*' required>
-        <br>
+      <div class='container'>
+        <form action='/addlisting' method='POST' enctype='multipart/form-data'>
 
-        <label for='fTitle'>Title</label>
-        <input type='TEXT' name='fTitle' id='fTitle' required>
-        <br>
-        <label for='fPrice'>Price (SGD)</label>
-        <input type='TEXT' name='fPrice' id='fPrice' required>
-        <br>
-        <label for='fDescription'>Description</label>
-        <input type='TEXT' name='fDescription' id='fDescription' required>
-        <br>
-        <div>Options:</div>
-        <%options.forEach(element => {%>
-          <label for='fOptions<%=element.id%>'><%=element.name%></label>
-          <input type="checkbox" id ='fOptions<%=element.id%>' name='fOptions' value='<%=element.id%>'>
-        <%}); %>       
-        <br> 
-        
-        <label for='fCategory'>Choose a category: </label>
-        <select name ='fCategory' id= 'fCategory'>
+        <div class='row'>
+          <div class='col-12 col-md-1 label-col'>
+              <label for='fThumbnail'>Listing thumbnail:</label>
+
+          </div>  
+          <div class='col-12 col-md-3 input-col'>
+              <input type='file' name='fThumbnail' id='fThumbnail' accept='image/*' required>
+
+          </div>  
+        </div>
+        <div class='row'>
+          <div class='col-12 col-md-1 label-col'>
+              <label for='fImage'>Listing image:</label>
+
+          </div>  
+          <div class='col-12 col-md-3 input-col'>
+              <input type='file' name='fImage' id='fImage' accept='image/*' required>
+
+          </div>  
+        </div>
+        <div class='row'>
+          <div class='col-12 col-md-1 label-col'>
+              <label for='fTitle'>Title</label>
+
+          </div>  
+          <div class='col-12 col-md-3 input-col'>
+              <input type='TEXT' name='fTitle' id='fTitle' required>
+
+          </div>  
+        </div>
+        <div class='row'>
+          <div class='col-12 col-md-1 label-col'>
+              <label for='fPrice'>Price (SGD)</label>
+
+          </div>  
+          <div class='col-12 col-md-3 input-col'>
+              <input type='TEXT' name='fPrice' id='fPrice' required>
+
+          </div>  
+        </div>
+        <div class='row'>
+          <div class='col-12 col-md-1 label-col'>
+              <label for='fDescription'>Description</label>
+          </div>  
+          <div class='col-12 col-md-3 input-col'>
+              <input type='TEXT' name='fDescription' id='fDescription' required>
+          </div>  
+        </div>
+        <div class='row'>
+          <div class='col-12 col-md-1 label-col'>
+            <div>Options:</div>
+          </div>  
+          <div class='col-12 col-md-3 input-col'>
+            <%options.forEach(element => {%>
+              <label for='fOptions<%=element.id%>'><%=element.name%></label>
+              <input type="checkbox" id ='fOptions<%=element.id%>' name='fOptions' value='<%=element.id%>'>
+            <%}); %>     
+          </div>  
+        </div>
+        <div class='row'>
+          <div class='col-12 col-md-1 label-col'>
+              <label for='fCategory'>Choose a category: </label>
+
+          </div>  
+          <div class='col-12 col-md-3 input-col'>
+            <select name ='fCategory' id= 'fCategory'>
               <%categories.forEach(element => { %>
                 <option value='<%=element.id%>'><%=element.name%></option>
-             <% }); %>
-        </select> 
+                <% }); %>
+            </select> 
+          </div>  
+        </div>
+        <div class='row'>
+          <div class='col-12'>
+            <input type="submit" value="submit" class="btn btn-primary"> 
+          </div>
+        </div>
 
-        <br> 
-        <input type="submit" value="submit">
-      </form>
-  
+        </form>
+      </div>
   </main>
 <%-include('partials/footer.ejs')%>
     

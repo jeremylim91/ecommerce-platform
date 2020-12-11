@@ -1,14 +1,33 @@
 
-    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+    <%-include('partials/head.ejs', {stylesheet: '/categories.css'})%>
   <body>
+
     <%-include('partials/navBar.ejs')%>
     <main>
-   <%dataToDisplay.forEach(element => {%>
-    <div><%=element.thumbnail%></div>
-    <a href="/categories/<%=element.name%>"><%=element.name%></a>  
-     <br/><br>
-    <%}); %>
-  
+      <div class='container'>
+        <div class='row'>
+          <div class='col'>
+            <h2>Categories:</h2> <%#= dataToDisplay[0].cate %> 
+          </div>
+        </div>
+        <div class='row'>
+          <%dataToDisplay.forEach(element => {%>
+            <div class='col-md-6 col-xl-4 card-col-container'>
+              
+              <div class="card">
+               <img class="card-img-top" src="/<%=element.thumbnail%>" alt="Card image">
+                  <div class="card-body">
+                   <h4 class="card-title"><%=element.name%></h4>
+                   <a href="/categories/<%=element.name%>" class="stretched-link"></a>
+                  </div>
+              </div>
+            </div>
+            <%}); %>
+        </div>
+      </div>
+
+      
+
   </main>
 <%-include('partials/footer.ejs')%>
     
