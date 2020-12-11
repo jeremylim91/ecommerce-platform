@@ -1,0 +1,25 @@
+.row {
+  /* display: flex;
+  justify-content: center;
+  min-height: 10rem; */
+}
+.label-col {
+  /* padding-top: 1rem; */
+}
+.input-col {
+}
+.form-group {
+  border-bottom: solid #e9ecef;
+  border-width: 0.2rem;
+  padding-bottom: 1.5rem;
+}
+
+@media screen and (min-width: 600px) {
+  .container {
+    max-width: 600px;
+  }
+}
+
+.btn {
+  width: 100%;
+}

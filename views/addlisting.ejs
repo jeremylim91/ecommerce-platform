@@ -1,5 +1,5 @@
 
-    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+    <%-include('partials/head.ejs', {stylesheet: '/addlisting.css'})%>
   <body>
       <%-include('partials/navBar.ejs')%>
 
@@ -7,71 +7,74 @@
       <div class='container'>
         <form action='/addlisting' method='POST' enctype='multipart/form-data'>
 
-        <div class='row'>
-          <div class='col-12 col-md-1 label-col'>
-              <label for='fThumbnail'>Listing thumbnail:</label>
-
+        <div class='row form-group'>
+          <div class='col-12 col-md-4 label-col'>
+            Upload Thumbnail:
           </div>  
-          <div class='col-12 col-md-3 input-col'>
-              <input type='file' name='fThumbnail' id='fThumbnail' accept='image/*' required>
-
+          <div class='col-12 col-md-8 input-col custom-file'>
+            <input type="file" class="custom-file-input" id="fThumbnail" name='fThumbnail' accept='image/*' required>
+            
+            <label for='fThumbnail' class='custom-file-label'>Choose file</label>
           </div>  
         </div>
-        <div class='row'>
-          <div class='col-12 col-md-1 label-col'>
+        <div class='row form-group'>
+          <div class='col-12 col-md-4 label-col'>
               <label for='fImage'>Listing image:</label>
 
           </div>  
-          <div class='col-12 col-md-3 input-col'>
-              <input type='file' name='fImage' id='fImage' accept='image/*' required>
-
+          <div class='col-12 col-md-8 input-col custom-file'>
+            <input type="file" class="custom-file-input" id="fImage" name='fImage' accept='image/*' required>
+            
+            <label for='fImage' class='custom-file-label'>Choose file</label>
           </div>  
         </div>
-        <div class='row'>
-          <div class='col-12 col-md-1 label-col'>
+        <div class='row form-group'>
+          <div class='col-12 col-md-4 label-col'>
               <label for='fTitle'>Title</label>
 
           </div>  
-          <div class='col-12 col-md-3 input-col'>
-              <input type='TEXT' name='fTitle' id='fTitle' required>
+          <div class='col-12 col-md-8 input-col'>
+              <input type='TEXT' name='fTitle' id='fTitle' class="form-control" required>
 
           </div>  
         </div>
-        <div class='row'>
-          <div class='col-12 col-md-1 label-col'>
+        <div class='row form-group'>
+          <div class='col-12 col-md-4 label-col'>
               <label for='fPrice'>Price (SGD)</label>
 
           </div>  
-          <div class='col-12 col-md-3 input-col'>
-              <input type='TEXT' name='fPrice' id='fPrice' required>
+          <div class='col-12 col-md-8 input-col'>
+              <input type='TEXT' name='fPrice' id='fPrice' class="form-control" required>
 
           </div>  
         </div>
-        <div class='row'>
-          <div class='col-12 col-md-1 label-col'>
-              <label for='fDescription'>Description</label>
+        <div class='row form-group'>
+          <div class='col-12 col-md-4 label-col'>
+            <label for='fDescription'>Description</label>
           </div>  
-          <div class='col-12 col-md-3 input-col'>
-              <input type='TEXT' name='fDescription' id='fDescription' required>
+          <div class='col-12 col-md-8 input-col'>
+                <textarea class="form-control" id="fDescription" name='fDescription' rows="3" required></textarea>
+
+              <!-- <input type='TEXT' name='fDescription' id='fDescription' required> -->
           </div>  
         </div>
-        <div class='row'>
-          <div class='col-12 col-md-1 label-col'>
+        <div class='row form-group'>
+          <div class='col-12 col-md-4 label-col'>
             <div>Options:</div>
           </div>  
-          <div class='col-12 col-md-3 input-col'>
+          <div class='col-12 col-md-8 input-col'>
             <%options.forEach(element => {%>
               <label for='fOptions<%=element.id%>'><%=element.name%></label>
               <input type="checkbox" id ='fOptions<%=element.id%>' name='fOptions' value='<%=element.id%>'>
             <%}); %>     
           </div>  
         </div>
-        <div class='row'>
-          <div class='col-12 col-md-1 label-col'>
+        <div class='row form-group'>
+          <div class='col-12 col-md-4 label-col'>
               <label for='fCategory'>Choose a category: </label>
 
           </div>  
-          <div class='col-12 col-md-3 input-col'>
+          <div class='col-12 col-md-8 input-col'>
             <select name ='fCategory' id= 'fCategory'>
               <%categories.forEach(element => { %>
                 <option value='<%=element.id%>'><%=element.name%></option>
