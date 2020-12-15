@@ -2,6 +2,21 @@
   <body>
     <%-include('partials/navBar.ejs')%>
     <main>
+
+      <ul class="breadCrumbs">
+        <li class="breadCrumbs-items">
+          <a href="/" class="breadCrumbs-link"><img src="https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png" alt='Maplebear Logo' class='breadCrumbs-home-logo'></a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/categories" class="breadCrumbs-link">Categories</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/categories/<%= categoryName %> " class="breadCrumbs-link">Items by category</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/products/:<%= productDetails.id %> " class="breadCrumbs-link breadCrumbs-link-active"><%= productTitle%></a>
+        </li>
+      </ul>
       <div class='container'>
         <div class= 'row'>
         <div class= 'col' id='thumbnaiHolder' >
@@ -67,9 +82,9 @@
           </div>
             </div>
       </div>
-</div>
-  
-  </main>
+      </div>
+      
+    </main>
 <%-include('partials/footer.ejs')%>
     
   </body>

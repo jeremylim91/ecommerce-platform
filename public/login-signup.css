@@ -1,0 +1,25 @@
+.container {
+  margin-top: 20px;
+}
+
+.bearLogoCol {
+  display: flex;
+  justify-content: center;
+}
+.textCol h2,
+div {
+  text-align: center;
+}
+
+.caution {
+  width: 15rem;
+}
+
+.btnsRow {
+  display: flex;
+  justify-content: center;
+}
+
+.btn {
+  margin-top: 2rem;
+}

@@ -1,11 +1,33 @@
 :root {
   font-size: 16px;
   font-family: "Open Sans";
-  --text-primary: #b6b6b6;
+  --text-primary: #9c9c9c;
   --text-secondary: #ececec;
-  --bg-primary: #23232e;
+  --bg-primary: #cf2025;
   --bg-secondary: #141418;
   --transition-speed: 600ms;
+}
+
+#cartCountHolder {
+  width: 1.2rem;
+  height: 1.2rem;
+  border: solid black;
+  border-radius: 100%;
+  background-color: black;
+  color: white;
+  font-size: 0.8rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  opacity: 0.8;
+}
+
+.nav-link-cart {
+  position: relative;
 }
 
 nav {
@@ -88,11 +110,11 @@ main {
 }
 
 .fa-primary {
-  color: #ff7eee;
+  color: #de9000;
 }
 
 .fa-secondary {
-  color: #df49a6;
+  color: #c79909;
 }
 
 .fa-primary,

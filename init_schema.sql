@@ -48,7 +48,8 @@ CREATE TABLE IF NOT EXISTS "products" (
   "image" TEXT,
   "category_id" INT,
   "option_id" INT,
-  "create_at" TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  "create_at" 
+  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS "options" (

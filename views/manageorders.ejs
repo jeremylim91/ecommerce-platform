@@ -3,71 +3,92 @@
   <body>
     <%-include('partials/navBar.ejs')%>
     <main>
+
+      <ul class="breadCrumbs">
+        <li class="breadCrumbs-items">
+          <a href="/" class="breadCrumbs-link"><img src="https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png" alt='Maplebear Logo' class='breadCrumbs-home-logo'></a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/manageorders" class="breadCrumbs-link breadCrumbs-link-active">Manage Live Orders</a>
+        </li>
+      </ul>
+
+      <div><img src="https://www.straitstimes.com/sites/default/files/styles/article_pictrure_780x520_/public/articles/2018/12/21/nm-maple-bear-2112.jpg?itok=ejmDlclm&timestamp=1545352025" alt="maplebear background" class='bear-background'></div>
     <div class='container'>
-      <div class='row'>
-        <div class='col'>
-          <h1>Manage orders</h1>     
+      <div class="row">
+        <div class="col">
+            <form action="/manageorders" class="form-group">
+              <select name="fSort" id="fSort" onchange= "this.form.submit()" class='btn btn-outline-primary dropdown-toggle' >
+                <option value="ASC">Sort </option>
+                <option value="ASC">Ascending </option>
+                <option value="DESC">Descending</option>
+              </select>
+            </form>
         </div>
       </div>
-      <div class='row'>
-          <div class='col-1'>
-            <div>order id</div>
+      <div class='row header'>
+        <div class="col-8 col-lg-10"> 
+          <div class="row">
+            <div class="col-12 col-lg-1">
+              <div>Order id</div>
+            </div>
+            <div class='col-12 col-lg-4' >
+              <div>Product</div>
+            </div>
+            <div class='col-12 col-lg-1'>
+              <div>Option</div>
+            </div>
+            <div class='col-12 col-lg-1'>
+              <div>Price</div>
+            </div>
+            <div class='col-12 col-lg-5'>
+              <div>Details (custId/Date)</div>
+            </div>
           </div>
-          <div class='col-2'>
-            <div>Thumbnail</div>
-          </div>
-          <div class='col-2'>
-            <div>Title</div>
-          </div>
-          <div class='col-1'>
-            <div>Option</div>
-          </div>
-          <div class='col-1'>
-            <div>Price</div>           
-          </div>
-          <div class='col-2'>
-            <div>Details (custId/date)</div>
-          </div>
-          <div class='col-1'>
-            <div>Proof of payment</div>
-          </div>
-          <div class='col-1'>
-            <div>Ack Payment</div>
-          </div>
+        </div>
+
+        <div class='col-1'>
+          <div>Proof of payment</div>
+        </div>
+        <div class='col-1'>
+          <div>Ack Payment</div>
+        </div>
       </div>
-      <%dataToDisplay.forEach(element => {%>
-        <div class='row'>
-          <div class='col-1'>
-            <%=element.order_id %>
+      <%allActiveOrders.forEach(element => {%>
+        <div class='row contentRow'>
+          <div class="col-8 col-lg-10">
+            <div class="row">
+              <div class='col-12 col-lg-1'>
+                <span class='order-Id-Header'>Order Id: </span>
+                <%=element.order_id %>
+              </div>
+              <div class='col-12 col-lg-4' >
+                <span class='text-truncate titleSpan'><%=element.title%></span>
+                <img src="/<%=element.thumbnail %>" alt='product thumbnail' class="thumbnailImg">
+              </div>
+              <div class='col-12 col-lg-1'>
+                <span class="text-truncate"><%=element.optionname%>
+              </div></span>
+              <div class='col-12 col-lg-1'>
+                <span class="text-truncate">$<%=element.price%></span>
+              </div>
+              <div class='col-12 col-lg-5'>
+                <span class='text-truncate'><%=element.user_id%>/
+                <%=element.create_at%></span>
+              </div>
+            </div>
           </div>
-          <div class='col-2 text-truncate'>
-            <%=element.thumbnail %>
-          </div>
-          <div class='col-2 text-truncate'>
-            <%=element.title%>
-          </div>
-          <div class='col-1 text-truncate'>
-            <%=element.optionname%>
-          </div>
-          <div class='col-1 text-truncate'>
-            $<%=element.price%>
-          </div>
-          <div class='col-2 text-truncate'>
-            
-            <%=element.user_id%>/
-            <%=element.create_at%>
-            
-          </div>
-          <div class='col-1 text-truncate'>
+          <div class='col-4 col-lg-1 receiptCol'>
             <%if (element.proof_of_payment===null){%>
-              Pending
+              <span class="text-truncate">Pending</span>
             <% } else{%> 
-            <img src='/<%=element.proof_of_payment%>'/>
+            <img src='/<%=element.proof_of_payment%>' alt='receipt' class='receiptImg'>
             <% } %> 
           </div>
-          <div class='col text-truncate'>
-            <form action= '/manageorder/element.order_id/paid' method='POST'>
-              <input type= 'submit' value='Paid'>
+          <div class='col-12 col-lg-1 btnCol'>
+            <form action= '/manageorders' method='POST'>
+              <input type='hidden' name="orderId" id='orderId' value="<%=element.order_id%> ">
+              <input type= 'submit' value='Paid' class='btn btn-primary'>
             </form>
           </div>
          

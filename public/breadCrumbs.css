@@ -1,0 +1,63 @@
+/* Bread crumbs */
+.breadCrumbs {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  list-style-type: none;
+  margin-bottom: 2rem;
+}
+.breadCrumbs-items {
+  /* padding: 5px; */
+  display: flex;
+  align-items: center;
+}
+.breadCrumbs-items:not(:last-of-type)::after {
+  content: ">";
+  margin: 0 5px;
+  color: #cccccc;
+}
+.breadCrumbs-link {
+  text-decoration: none;
+  color: #919396;
+  width: 3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.breadCrumbs-link:hover {
+  text-decoration: underline;
+  color: #c79909;
+}
+.breadCrumbs-link-active {
+  color: #c79909;
+  font-weight: 500;
+  font-size: 1rem;
+  width: 100%;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+.breadCrumbs-home-logo {
+  width: 3rem;
+}
+
+@media only screen and (min-width: 600px) {
+  .breadCrumbs-items {
+    padding: 5px;
+  }
+  .breadCrumbs-link {
+    text-decoration: none;
+    color: #919396;
+    width: 100%;
+  }
+  .breadCrumbs-link-active {
+    color: #c79909;
+    font-weight: 500;
+    font-size: 1.3rem;
+    width: 100%;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+}

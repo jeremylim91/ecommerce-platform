@@ -77,20 +77,36 @@ const checkAuth = (req, res, next) => {
   }
   // prevent user from accessing page unless logged in
   if (req.isUserLoggedIn === false) {
-    res.status(403).send('sorry, please login to proceed');
+    res.render('login-signup');
     return;
   }
   next();
 };
+
+const getCartItemCount = (req, res, next) => {
+  const { userId } = req.cookies;
+  // set the sql query to count the number of items in cart
+  const queryForCartItems = `SELECT COUNT (*) FROM user_products_cart 
+  WHERE 
+  user_id= ${userId} AND
+  inside_cart=${true}`;
+  pool.query(queryForCartItems)
+    .then((result) => {
+      const cartCount = result.rows[0].count;
+      console.log(cartCount);
+      req.cartCount = cartCount;
+      next();
+    })
+    .catch((error) => console.log(error.stack));
+};
 // ===========specify routes and their reqs/res==========
 
 // Route description: Home or main page
-app.get('/', checkAuth, (req, res) => {
-  if (req.isUserLoggedIn === false) {
-    res.status(403).send('sorry, please login to proceed');
-    return;
-  }
-  res.render('home');
+app.get('/', checkAuth, getCartItemCount, (req, res) => {
+  console.log(req.cartCount);
+  const dataToDisplay = { cartCount: req.cartCount };
+  console.log(dataToDisplay);
+  res.render('home', dataToDisplay);
 });
 
 // Route description: user login page
@@ -182,22 +198,36 @@ app.post('/signup', (req, res) => {
 });
 
 // Route description: view categories
-app.get('/categories', checkAuth, (req, res) => {
-  const queryForCategories = 'SELECT * FROM categories';
+app.get('/categories', getCartItemCount, checkAuth, (req, res) => {
+  // get info from the middleware on card count
+  const dataToDisplay = { cartCount: req.cartCount };
+  let { fSort } = req.query;
+  if (fSort === undefined) {
+    fSort = 'ASC';
+  }
+  console.log('fSort is:');
+  console.log(fSort);
+  const queryForCategories = `SELECT * FROM categories ORDER BY name ${fSort}`;
   pool.query(queryForCategories, (err, result) => {
     checkQueryErr(err, res);
     console.table(result.rows);
-    const dataToDisplay = result.rows;
-    res.render('categories', { dataToDisplay });
+    dataToDisplay.content = result.rows;
+    res.render('categories', dataToDisplay);
   });
 });
 
 // Route description: view products in a specific category
-app.get('/categories/:categoryName', checkAuth, (req, res) => {
+app.get('/categories/:categoryName', checkAuth, getCartItemCount, (req, res) => {
+  const dataToDisplay = { cartCount: req.cartCount };
+
   // display all the products in a given category
   const { categoryName } = req.params;
   console.log('categoryName is:');
   console.log(categoryName);
+
+  // add this to the dataToDisplay object so that it's accessible in bread crumbs
+  dataToDisplay.categoryName = categoryName;
+
   // get the category.id that fits this category.name
   const queryCategoryIdUsingCategoryName = 'SELECT * FROM categories WHERE name= $1';
   pool
@@ -206,18 +236,11 @@ app.get('/categories/:categoryName', checkAuth, (req, res) => {
       const categoryId = result.rows[0].id;
       console.log(categoryId);
 
-      // const queryForProductsWithCatX = `SELECT * FROM products
-      // INNER JOIN product_categories
-      // ON products.id= product_categories.product_id
-      // WHERE product_categories.category_id=$1`;
-
       const queryForProductsWithCatX = 'SELECT * FROM categories INNER JOIN products ON categories.id= products.category_id WHERE products.category_id=$1';
 
       return pool.query(queryForProductsWithCatX, [categoryId]);
     })
     .then((result) => {
-      let dataToDisplay = {};
-
       const arrayOfProducts = result.rows;
       const arrayOfUniqueProducts = [];
       /* look through the array of products and filter out unique
@@ -225,39 +248,42 @@ app.get('/categories/:categoryName', checkAuth, (req, res) => {
       arrayOfProducts.filter((value, index, self) => self.findIndex((v) => v.title === value.title) === index).map((ele) => {
         arrayOfUniqueProducts.push(ele);
       });
-      dataToDisplay = arrayOfUniqueProducts;
+      dataToDisplay.arrayOfUniqueProducts = arrayOfUniqueProducts;
 
       console.log('dataToDisplay is:');
       console.log(dataToDisplay);
 
-      res.render('categories-product', { dataToDisplay });
+      // res.render('categories-product', dataToDisplay);
+      res.render('categories-product', dataToDisplay);
     })
     .catch((error) => console.log(error.stack));
 });
 
 // Route description: specific orders (view and submit )
-app.get('/products/:productId', checkAuth, (req, res) => {
+app.get('/products/:productId', checkAuth, getCartItemCount, (req, res) => {
   // set an object that holds all the data that will be renedered eventually
-  const dataToDisplay = {};
+  const dataToDisplay = { cartCount: req.cartCount };
   // get data from req.params
   const { productId } = req.params;
-  const queryProductById = 'SELECT * FROM products WHERE id=$1';
+
+  /* query products table for a specific product corresponding to the recently obtained product Id
+  Secondary objective: use an inner join so that we can obtain
+  the 'category' (needed for inner join) */
+  const queryProductById = `SELECT * FROM categories 
+  INNER JOIN products
+  ON products.category_id=categories.id
+  WHERE products.id=$1`;
   pool
     .query(queryProductById, [productId])
     .then((result) => {
       const productDetails = result.rows[0];
+      // store the category name in dataToDisplay so that we have it for breadcrumbs
+      dataToDisplay.categoryName = productDetails.name;
+      // store the product title in dataToDisplay so that we have it for breadcrumbs
+      dataToDisplay.productTitle = productDetails.title;
       console.log('product details:');
       console.log(productDetails);
       dataToDisplay.productDetails = productDetails;
-      console.log('data to display:');
-      console.log(dataToDisplay);
-
-      // set the sql query that gets the list of options that are relevant for this product
-      // const queryProductXOptions = `SELECT * FROM options
-      // INNER JOIN product_options_inventory
-      // ON options.id=product_options_inventory.option_id
-      // WHERE product_options_inventory.product_id=$1`;
-      // return pool.query(queryProductXOptions, [productId]);
       const queryProductXOptions = `SELECT * FROM options
       INNER JOIN products
       ON options.id=products.option_id
@@ -274,13 +300,15 @@ app.get('/products/:productId', checkAuth, (req, res) => {
     .catch((error) => console.log(error.stack));
 });
 app.post('/products/:productId', checkAuth, (req, res) => {
+  // set an object that holds all the data that will be renedered eventually
+  // const dataToDisplay = { cartCount: req.cartCount };
   const { fProductOptions, fProductTitle } = req.body;
-  console.log('option id:');
-  console.log(fProductOptions);
-  console.log('fProductTitle:');
-  console.log(fProductTitle);
   // get the user id
   const { userId } = req.cookies;
+  // get path params
+  const { productId } = req.params;
+  console.log('proudctId is:');
+  console.log(productId);
 
   // set the query that looks for products.id based on the options & title of the user-selected item
   const queryForProduct = `SELECT * FROM products WHERE title='${fProductTitle}' AND option_id=${fProductOptions}`;
@@ -288,33 +316,35 @@ app.post('/products/:productId', checkAuth, (req, res) => {
   pool.query(queryForProduct)
     .then((result) => {
       console.table(result.rows);
-      // set the query to insert this product into the cart table
+      // set the query to insert this product into the cart
       const insertProductIntoCart = 'INSERT INTO user_products_cart (user_id, product_id) VALUES ($1, $2)';
       return pool.query(insertProductIntoCart, [userId, result.rows[0].id]);
     }).then(() => {
-      res.send('added to cart');
+      res.redirect(`/products/${productId}`);
     })
     .catch((error) => console.log(error.stack));
 });
 
 // Route description: view all listings and delete if nec
-app.get('/manageListings', checkAuth, (req, res) => {
-// dislay all listings
+app.get('/manageListings', checkAuth, getCartItemCount, (req, res) => {
+  // set an object that holds all the data to be rendered
+  const dataToDisplay = { cartCount: req.cartCount };
+  // dislay all listings
   const queryToDisplayProducts = 'SELECT * FROM products';
   pool
     .query(queryToDisplayProducts)
     .then((result) => {
-      const dataToDisplay = result.rows;
+      dataToDisplay.allProducts = result.rows;
 
-      res.render('manageListings', { dataToDisplay });
+      res.render('manageListings', dataToDisplay);
     })
     .catch((error) => console.log(`Error:${error.stack}`));
 });
 
 // Route description:add new listings
-app.get('/addlisting', checkAuth, (req, res) => {
+app.get('/addlisting', checkAuth, getCartItemCount, (req, res) => {
   // set an object variable that will hold the content to display
-  const dataToDisplay = {};
+  const dataToDisplay = { cartCount: req.cartCount };
 
   // query for all available options
   const queryForOptions = 'SELECT * FROM options';
@@ -332,14 +362,15 @@ app.get('/addlisting', checkAuth, (req, res) => {
     .then((result) => {
       const categories = result.rows;
       dataToDisplay.categories = categories;
-      console.log('final dataToDisplay is:');
-      console.log(dataToDisplay);
       // get the ejs form
       res.render('addlisting', dataToDisplay);
     })
     .catch((error) => console.log(error.stack));
 });
 app.post('/addlisting', checkAuth, multerUpload.fields([{ name: 'fThumbnail', maxCount: 1 }, { name: 'fImage', maxCount: 1 }]), (req, res) => {
+// set an object variable that will hold the content to display
+  // const dataToDisplay = { cartCount: req.cartCount };
+
   // store the form data as variables
   const {
     fTitle, fPrice, fDescription, fCategory,
@@ -376,74 +407,82 @@ app.post('/addlisting', checkAuth, multerUpload.fields([{ name: 'fThumbnail', ma
 });
 
 // Route description: view items in my cart
-app.get('/mycart', checkAuth, (req, res) => {
-// get the user's id
+app.get('/mycart', checkAuth, getCartItemCount, (req, res) => {
+  console.log('received get request for /mycart');
+  // set an object variable that will hold the content to display
+  const dataToDisplay = { cartCount: req.cartCount };
+  // get the user's id
   const { userId } = req.cookies;
   // set the query to check the cart for all products relating to this user
   const queryForCartItems = `SELECT products.id AS productsId, products.title, products.price, products.thumbnail, products.option_id, user_products_cart.id AS user_products_cartId, user_products_cart.product_id, user_products_cart.order_id, user_products_cart.qty, user_products_cart.inside_cart, user_products_cart.order_placed, user_products_cart.order_status_id
   FROM PRODUCTS
   INNER JOIN user_products_cart 
   ON products.id= user_products_cart.product_id
-  WHERE user_id=${userId} AND inside_cart=TRUE AND order_placed=FALSE`;
+  WHERE user_id=${userId} AND inside_cart=TRUE AND order_placed=${false}`;
 
   // execute the query
   pool.query(queryForCartItems)
     .then((result) => {
-      const cartItems = result.rows;
-      console.table(cartItems);
-      const dataToDisplay = { cartItems };
+      dataToDisplay.cartItems = result.rows;
       res.render('mycart', dataToDisplay);
     })
     .catch((error) => console.log(error.stack));
 });
-app.post('/mycart', checkAuth, (req, res) => {
-  console.log(' received post request for /mycart');
-  const { fCartItems } = req.body;
-  console.log('fCartItems are:');
-  console.log(fCartItems);
+// app.post('/mycart', checkAuth, (req, res) => {
+//   console.log(' received post request for /mycart');
+//   const { fCartItems } = req.body;
+//   console.log('fCartItems are:');
+//   console.log(fCartItems);
 
-  res.redirect('/mycart/review');
-});
+//   res.redirect('/mycart/review');
+// });
 
 // Route description: review items in cart
-app.post('/mycart/review', checkAuth, (req, res) => {
+app.post('/mycart/review', checkAuth, getCartItemCount, (req, res) => {
   console.log(' received post request for /mycart/review');
-  let { fCartItems } = req.body;
+  // set an object variable that will hold the content to display
+  const dataToDisplay = { cartCount: req.cartCount };
+
+  let { fCheckedCartItems } = req.body;
   // if the user did not check any items, tell them to do so
-  if (fCartItems === undefined) {
+  if (fCheckedCartItems === undefined) {
     res.send('Please choose at least one item to proceed');
     return;
   }
   // ensure that fCartItems yields an array even if it's only one checkbox
-  if (Array.isArray(fCartItems) === false) {
-    fCartItems = [fCartItems];
+  if (Array.isArray(fCheckedCartItems) === false) {
+    fCheckedCartItems = [fCheckedCartItems];
   }
-  console.log(`fcartItems: ${fCartItems}`);
+  console.log(`fCheckedcartItems: ${fCheckedCartItems}`);
   // set a variable for the total price of items in the cart
-  const totalPrice = 0;
-
-  // set an object variable to hold the data to display
-  const dataToDisplay = { totalPrice };
+  dataToDisplay.totalPrice = 0;
   dataToDisplay.cartItems = [];
 
   // set the sql query that retrieves the items in fCartItems
-  fCartItems.forEach((element, index) => {
-    const queryForItems = `SELECT * FROM products WHERE id= ${element}`;
+  fCheckedCartItems.forEach((element, index) => {
+    console.log(`iteration: ${index}`);
+    const queryForItems = `SELECT * FROM products
+    INNER JOIN user_products_cart
+    ON products.id=user_products_cart.product_id
+    WHERE user_products_cart.id= ${element} AND
+    order_placed= ${false}`;
     pool.query(queryForItems, (err, result) => {
       if (err) {
         console.log(err);
       }
       dataToDisplay.cartItems.push(result.rows[0]);
       dataToDisplay.totalPrice += result.rows[0].price;
-      console.log(`index= ${index}`);
-      if (fCartItems.length - 1 === index) {
-        console.log('data to display is:');
-        console.log(dataToDisplay);
+      console.log('data to display is:');
+      console.log(dataToDisplay);
+      if (fCheckedCartItems.length - 1 === index) {
+        // console.log('data to display is:');
+        // console.log(dataToDisplay);
         res.render('mycart-review', dataToDisplay);
       }
     });
   });
 });
+
 app.post('/mycart/review/pay', checkAuth, (req, res) => {
   console.log('received post request to mycart/review/pay');
   // get the order number
@@ -474,7 +513,7 @@ app.post('/mycart/review/pay', checkAuth, (req, res) => {
         WHERE 
         user_id=  ${req.cookies.userId} AND
         inside_cart= true AND
-        product_id = ${element}
+        id = ${element}
         RETURNING * 
         `;
         pool.query(createOrderAndUpdateOrderStatus, (err, createOrderResult) => {
@@ -484,7 +523,7 @@ app.post('/mycart/review/pay', checkAuth, (req, res) => {
           console.log(userOrderData);
         });
       });
-      console.table(userOrderData);
+      // console.table(userOrderData);
       res.redirect(`/payment/${orderId}`);
     })
     .catch((error) => console.log(error.stack));
@@ -492,10 +531,14 @@ app.post('/mycart/review/pay', checkAuth, (req, res) => {
 });
 
 // Route description: allow user to upload paynow details
-app.get('/payment/:orderId', checkAuth, (req, res) => {
+app.get('/payment/:orderId', getCartItemCount, checkAuth, (req, res) => {
+// set an object variable that will hold the content to display
+  const dataToDisplay = { cartCount: req.cartCount };
+
   const { orderId } = req.params;
   console.log('received get request for payment/:orderId');
-  console.log(`order id is: ${orderId}`);
+  // store orderId in the object to be displayed
+  dataToDisplay.orderId = orderId;
 
   // authenticate that the current user matches the order in the orders table
   // Step1: set the query to call out details matching the orderId
@@ -515,7 +558,7 @@ app.get('/payment/:orderId', checkAuth, (req, res) => {
       if (userIdAttachedToOrder === userIdFromCookies) {
         console.log('credentials are valid to access this order');
         // allow the user to upload photos of his/her paynow transaction
-        res.render('payment-orderid', { orderId });
+        res.render('payment-orderid', dataToDisplay);
       } else {
         /* step4: if not the same, send message that there seems to be something
       wrong with the order: User not match order ID */
@@ -525,7 +568,10 @@ app.get('/payment/:orderId', checkAuth, (req, res) => {
     .catch((error) => (error.stack));
 });
 
-app.post('/payment/:orderId', checkAuth, multerUpload.single('fPaymentDetails'), (req, res) => {
+app.post('/payment/:orderId', checkAuth, getCartItemCount, multerUpload.single('fPaymentDetails'), (req, res) => {
+  console.log('received post request for payment/:orderId');
+  // set an object variable that will hold the content to display
+  const dataToDisplay = { cartCount: req.cartCount };
   const { orderId } = req.params;
   console.log(orderId);
   // set the update query to update the appropriate order id with the payment info
@@ -542,13 +588,24 @@ app.post('/payment/:orderId', checkAuth, multerUpload.single('fPaymentDetails'),
       return;
     }
     console.table(result.rows);
-    res.send('Payment details successfully updated');
+    res.render('paymentAcknowledgement', dataToDisplay);
   });
 });
 // Route description: view all orders
-app.get('/manageOrders', checkAuth, (req, res) => {
-// limit this page to only users that  is_teacher===true
-// step1: get the current user's id from the cookies
+app.get('/manageorders', getCartItemCount, checkAuth, (req, res) => {
+  console.log('received get request for manage orders');
+  // set an object variable that will hold the content to display
+  const dataToDisplay = { cartCount: req.cartCount };
+
+  // get the query params for the sort
+  let { fSort } = req.query;
+  console.log(fSort);
+  if (fSort === undefined) {
+    fSort = 'ASC';
+  }
+
+  // limit this page to only users that  is_teacher===true
+  // step1: get the current user's id from the cookies
   const { userId: currentUserId } = req.cookies;
   console.log(currentUserId);
   // step 2: use the current user's id to query the databsae
@@ -569,23 +626,34 @@ app.get('/manageOrders', checkAuth, (req, res) => {
 
         INNER JOIN user_products_cart on orders.id= user_products_cart.order_id
 
-        INNER JOIN products on user_products_cart.order_id= products.id
+        INNER JOIN products on user_products_cart.product_id= products.id
 
         INNER JOIN options on products.option_id= options.id
 
-        WHERE order_placed= true`;
+        WHERE order_placed= true AND
+        order_status_id= 1 OR
+        order_status_id=2 OR
+        order_status_id=3
+
+        ORDER BY
+        orderid ${fSort}
+        `;
       return pool.query(getAllActiveOrders);
     })
     .then((result) => {
-      const dataToDisplay = result.rows;
-      res.render('manageorders', { dataToDisplay });
+      dataToDisplay.allActiveOrders = result.rows;
+      console.table(dataToDisplay.allActiveOrders);
+      res.render('manageorders', dataToDisplay);
     })
     .catch((err) => console.log(err.stack));
 });
 // Route description: acknowledge payment
 
-app.post('/manageorder/:orderId/paid', checkAuth, (req, res) => {
-  const { orderId } = req.params;
+app.post('/manageorders', checkAuth, (req, res) => {
+  console.log('received post request for mangeorder/:orderId/paid');
+  const { orderId } = req.body;
+  console.log('orderId is:');
+  console.log(orderId);
   // set the update query to update user_products.order_status_id to 4/'paid'
   const updateOrderStatus = `UPDATE user_products_cart
   SET
@@ -599,12 +667,15 @@ app.post('/manageorder/:orderId/paid', checkAuth, (req, res) => {
     .query(updateOrderStatus)
     .then((result) => {
       console.table(result.rows);
+      res.redirect('/manageorders');
     })
     .catch((error) => console.log(error.stack));
 });
 
-app.get('/myorders', checkAuth, (req, res) => {
-  const dataToDisplay = {};
+app.get('/myorders', checkAuth, getCartItemCount, (req, res) => {
+  // set an object variable that will hold the content to display
+  const dataToDisplay = { cartCount: req.cartCount };
+
   // display all current orders
   const allCurentOrders = `SELECT * FROM user_products_cart WHERE
   user_id= ${req.cookies.userId} AND
@@ -629,7 +700,7 @@ app.get('/myorders', checkAuth, (req, res) => {
 app.get('/logout', checkAuth, (req, res) => {
   res.clearCookie('userId');
   res.clearCookie('loggedIn');
-  res.redirect('/login');
+  res.redirect('/');
 });
 
 app.listen(PORT);

@@ -2,7 +2,22 @@
     <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
   <body>
     <%-include('partials/navBar.ejs')%>
+     
     <main>
+      <ul class="breadCrumbs">
+        <li class="breadCrumbs-items">
+          <a href="/" class="breadCrumbs-link"><img src="https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png" alt='Maplebear Logo' class='breadCrumbs-home-logo'></a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/mycart" class="breadCrumbs-link">Cart</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/mycart/review" class="breadCrumbs-link">Review order</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/mycart/review/pay" class="breadCrumbs-link breadCrumbs-link-active">Submit payment details</a>
+        </li>
+      </ul>
     <div class='container'>
       <div class='row'>
         <div class='col'>
@@ -10,11 +25,11 @@
         </div>
       </div>
       <div class='row'>
-        <div class='col'>
+        <div class='col-4'>
           <form action='/payment/<%=orderId%>' method= 'POST' enctype='multipart/form-data'>
-            <label for='fPaymentDetails'>Choose file</label>
-            <input type='file' name='fPaymentDetails' id='fPaymentDetails'>
-            <input type="submit" value='submit'>
+            <input type='file' name='fPaymentDetails' id='fPaymentDetails' class="custom-file-input" accept='image/*' required>
+            <label for='fPaymentDetails' class='custom-file-label'>Choose file</label>
+            <input type="submit" value='submit' class='btn btn-primary' style='margin-top: 2rem;'>
           </form>               
         </div>
       </div>

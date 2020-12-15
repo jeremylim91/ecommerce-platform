@@ -1,0 +1,41 @@
+/* .background {
+  background-image: url("https://www.straitstimes.com/sites/default/files/styles/article_pictrure_780x520_/public/articles/2018/12/21/nm-maple-bear-2112.jpg?itok=ejmDlclm&timestamp=1545352025");
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+} */
+
+img {
+  position: absolute;
+  z-index: -1;
+  opacity: 0.2;
+  top: 50%;
+  left: 54%;
+  transform: translate(-50%, -50%);
+}
+
+.container {
+  margin-top: 50px;
+  /* height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; */
+}
+.subheader {
+  font-size: 2rem;
+  font-weight: 500;
+  margin-top: 5px;
+}
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.accordion {
+  margin-top: 20px;
+}
+.card-body {
+  background-color: transparent !important;
+}

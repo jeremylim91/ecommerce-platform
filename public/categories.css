@@ -1,3 +1,4 @@
+/* main content: */
 .card {
   /* width: 15rem; */
   display: flex;
@@ -23,7 +24,10 @@
   display: flex;
   justify-content: center;
 }
-
+.headerCol {
+  display: flex;
+  justify-content: space-between;
+}
 @media screen and (min-width: 600px) {
   .container {
   }

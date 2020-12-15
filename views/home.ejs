@@ -2,9 +2,73 @@
   <body>
     <%-include('partials/navBar.ejs')%>
 <main>
-  <h1> This is home</h1>
-</main>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>The Bear's Den</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="subheader">Welcome to Bear's Den: MapleBear's one-stop shop for all the stationary your cub needs to learn and grow</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="subheader">FAQs</div>
+          <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Payment
+                  </button>
+                </h5>
+              </div>
+
+              <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                      <ol>
+                        <li>How do I pay for my items?</li>
+                        <div>Bear's Den currently only accepets PayNow as the only form of payment. After your check-out items in your cart, you will be prompted to upload an image of your PayNow transaction, which our team will verify before dispatching your order.</div>
+                      </ol>      
+                    </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Shipping & Returns
+                  </button>
+                </h5>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                    <ol>
+                      <li>How long will delivery take?</li>
+                      <div>Upon verfication of your payment, delivery may take up to 2 working days(assuming items are in stock)</div>
+                      <div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quo totam sunt dolor itaque dolorum quos recusandae tempora veritatis, labore quis autem quam provident beatae delectus in tenetur et corporis repellendus.</div>
+                      <li>Help! My items are damaged. What can I do?</li>
+                    </ol>      
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <h3 style='margin:3rem'>*Disclaimer: This site was created as a practice project and bears no affiliation with any company of the same name </h2>
+      </div>
+    </div>
+  </div>
+
+<div><img src="https://www.straitstimes.com/sites/default/files/styles/article_pictrure_780x520_/public/articles/2018/12/21/nm-maple-bear-2112.jpg?itok=ejmDlclm&timestamp=1545352025" alt="maplebear background"></div>
+
+
 <%-include('partials/footer.ejs')%>
-    
+    </main>
   </body>
 </html>

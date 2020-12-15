@@ -3,15 +3,27 @@
   <body>
     <%-include('partials/navBar.ejs')%>
     <main>
+      <ul class="breadCrumbs">
+        <li class="breadCrumbs-items">
+          <a href="/" class="breadCrumbs-link"><img src="https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png" alt='Maplebear Logo' class='breadCrumbs-home-logo'></a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/categories" class="breadCrumbs-link">Categories</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/categories/<%= categoryName %> " class="breadCrumbs-link breadCrumbs-link-active">Items by category</a>
+        </li>
+      </ul>
+
       <div class='container'>
         <div class='row'>
-          <div class='col-3'>
-            Products by Category: <%#= dataToDisplay[0].cate %> 
+          <div class='col'>
+            <h4><%= categoryName %></h4> 
           </div>
         </div>
         <div class='row'>
-          <%dataToDisplay.forEach(element => {%>
-            <div class='col'>
+          <%arrayOfUniqueProducts.forEach(element => {%>
+            <div class='col-12 col-lg-4'>
               
               <div class="card">
                <img class="card-img-top" src="/<%=element.thumbnail%>" alt="Card image">

@@ -1,0 +1,46 @@
+<%-include('partials/head.ejs', {stylesheet: '/paymentAcknowledgement.css'})%>
+  <body>
+    <%-include('partials/navBar.ejs')%>
+    <main>
+      <ul class="breadCrumbs">
+        <li class="breadCrumbs-items">
+          <a href="/" class="breadCrumbs-link"><img src="https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png" alt='Maplebear Logo' class='breadCrumbs-home-logo'></a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/mycart" class="breadCrumbs-link">Cart</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/mycart/review" class="breadCrumbs-link">Review order</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/mycart/review/pay" class="breadCrumbs-link">Submit payment details</a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="#" class="breadCrumbs-link breadCrumbs-link-active">Acknowledgement</a>
+        </li>
+      </ul>
+    <section>
+      <div class='container'>
+        <div class="row">
+          <div class="col">
+            <h2>Thank you!</h2>     
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <img src='http://maplebearcatanduva.com.br/wp-content/uploads/2020/08/ursos.png' alt='high five'>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div> We've received your order. Please 🐻 with us as we need up to 3 working days to verify your payment details. Thereafter, we'll follow-up with delivery of your item(s) at the soonest!.</div>
+          </div>
+        </div>
+      </div>
+  
+  </section>
+  </main>
+<%-include('partials/footer.ejs')%>
+    
+  </body>
+</html>

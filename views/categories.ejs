@@ -4,14 +4,33 @@
 
     <%-include('partials/navBar.ejs')%>
     <main>
+      <ul class="breadCrumbs">
+        <li class="breadCrumbs-items">
+          <a href="/" class="breadCrumbs-link"><img src="https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png" alt='Maplebear Logo' class='breadCrumbs-home-logo'></a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/categories" class="breadCrumbs-link breadCrumbs-link-active">Categories</a>
+        </li>
+      </ul>
+ 
+
+      
+      
       <div class='container'>
         <div class='row'>
-          <div class='col'>
-            <h2>Categories:</h2> <%#= dataToDisplay[0].cate %> 
+          <div class='col headerCol'>
+            <h2>Categories:</h2> 
+            <form action="/categories" class="form-group">
+              <select name="fSort" id="fSort" onchange= "this.form.submit()" class='btn btn-outline-primary dropdown-toggle' >
+                <option value="ASC">Sort </option>
+                <option value="ASC">Ascending </option>
+                <option value="DESC">Descending</option>
+              </select>
+            </form>
           </div>
         </div>
         <div class='row'>
-          <%dataToDisplay.forEach(element => {%>
+          <%content.forEach(element => {%>
             <div class='col-md-6 col-xl-4 card-col-container'>
               
               <div class="card">

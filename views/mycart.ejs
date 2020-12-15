@@ -1,8 +1,17 @@
 
-    <%-include('partials/head.ejs', {stylesheet: '/home.css'})%>
+    <%-include('partials/head.ejs', {stylesheet: '/myCart.css'})%>
   <body>
     <%-include('partials/navBar.ejs')%>
     <main>
+        <ul class="breadCrumbs">
+        <li class="breadCrumbs-items">
+          <a href="/" class="breadCrumbs-link"><img src="https://www.maplebear.ca/wordpress_AN/wp-content/themes/maplebear_CA/images/maplebear_badge_1200.png" alt='Maplebear Logo' class='breadCrumbs-home-logo'></a>
+        </li>
+        <li class="breadCrumbs-items">
+          <a href="/mycart" class="breadCrumbs-link breadCrumbs-link-active">Cart</a>
+        </li>
+      </ul>
+
     <div class='container'>
       <div class='row'>
         <div class='col'>
@@ -23,12 +32,12 @@
       
       <form action='/mycart/review' method='POST'>
         <%cartItems.forEach(element => {%>
-          <div class='row'>
+          <div class='row contentRow'>
             <div class='col-1'>
-              <input type='checkbox' id='fCartItems<%=element.product_id%>' name='fCartItems' value='<%=element.product_id%>'>
+              <input type='checkbox' id='<%=element.user_products_cartid%>' name='fCheckedCartItems' value='<%=element.user_products_cartid%>'>
             </div>
             <div class='col'>
-              <label for='fCartItems<%=element.product_id%>'> <%=element.title%></label>          
+              <label for='<%=element.user_products_cartid%>'> <%=element.title%></label>          
             </div>
             <div class='col'>
               <%=element.price%> 
@@ -37,7 +46,7 @@
         <%}); %>
       <div class='row'>
         <div class='col'>
-          <input type='submit' value='Review order'>
+          <input type='submit' value='Review order' class='btn btn-primary'>
         </div>
       </div>
         </form>

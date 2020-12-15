@@ -1,0 +1,10 @@
+.contentRow:nth-child(even) {
+  background-color: #d0a21a62;
+}
+.contentRow:nth-child(odd) {
+  background-color: #b8b5ba;
+}
+
+.btn {
+  margin: 1rem;
+}
