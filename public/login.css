@@ -5,3 +5,7 @@ input {
 h1 {
   margin-left: 2rem;
 }
+.btnCol {
+  display: flex;
+  justify-content: flex-end;
+}
