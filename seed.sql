@@ -75,6 +75,12 @@ INSERT INTO categories (name, thumbnail)
 VALUES('Health', 'thumbnail-health.png');
 INSERT INTO categories (name, thumbnail) 
 VALUES('Books', 'thumbnail-books.png');
+INSERT INTO categories (name, thumbnail) 
+VALUES('Toys', 'thumbnail-toys.png');
+INSERT INTO categories (name, thumbnail) 
+VALUES('Stationary', 'thumbnail-stationary.png');
+INSERT INTO categories (name, thumbnail) 
+VALUES('Parties and Special Events', 'thumbnail-parties.png');
 
 -- INSERT INTO product_categories(product_id, category_id)
 -- VALUES (1,1); --boys uniform, category: garments
