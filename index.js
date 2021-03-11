@@ -41,7 +41,7 @@ const pool = new Pool(pgConnectionConfigs);
 // 
 // initialise express
 const app = express();
-const PORT = process.env.port||3004;
+const PORT = process.env.PORT||3004;
 
 // initialise multer: set the name of the multer upload directory
 const multerUpload = multer({ dest: 'uploads/' });
