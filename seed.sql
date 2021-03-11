@@ -70,11 +70,11 @@ VALUES('Deleted', 'This order has been deleted');
 -- VALUES (2,3);--girls uniform, size L
 
 INSERT INTO categories (name, thumbnail) 
-VALUES('Garments', 'thumbnail-garments');
+VALUES('Garments', 'thumbnail-garments.png');
 INSERT INTO categories (name, thumbnail) 
-VALUES('Health', 'thumbnail-health');
+VALUES('Health', 'thumbnail-health.png');
 INSERT INTO categories (name, thumbnail) 
-VALUES('Books', 'thumbnail-books');
+VALUES('Books', 'thumbnail-books.png');
 
 -- INSERT INTO product_categories(product_id, category_id)
 -- VALUES (1,1); --boys uniform, category: garments
