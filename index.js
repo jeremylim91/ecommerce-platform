@@ -270,6 +270,10 @@ app.get('/categories/:categoryName', checkAuth, getCartItemCount, (req, res) => 
       arrayOfProducts.filter((value, index, self) => self.findIndex((v) => v.title === value.title) === index).map((ele) => {
         arrayOfUniqueProducts.push(ele);
       });
+
+      console.log(`arrayOfUniqueProducts is:`)
+      console.log(arrayOfUniqueProducts)
+      
       dataToDisplay.arrayOfUniqueProducts = arrayOfUniqueProducts;
 
       console.log('dataToDisplay is:');

@@ -1,5 +1,5 @@
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
-VALUES('Boys school uniform', 'Shirt and shorts', 10, '/images/maple_bear_uniform_1578371603_0e102367_progressive', 'maplebear-logo.png', 1, 1);
+VALUES('Boys school uniform', 'Shirt and shorts', 10, 'maple_bear_uniform_1578371603_0e102367_progressive', 'maplebear-logo', 1, 1);
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
 VALUES('Boys school uniform', 'Shirt and shorts', 10, 'maple_bear_uniform_1578371603_0e102367_progressive', 'maplebear-logo', 1, 2);
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
@@ -70,7 +70,7 @@ VALUES('Deleted', 'This order has been deleted');
 -- VALUES (2,3);--girls uniform, size L
 
 INSERT INTO categories (name, thumbnail) 
-VALUES('Garments', '/images/noun_uniform_3018702.png');
+VALUES('Garments', 'thumbnail-garments');
 INSERT INTO categories (name, thumbnail) 
 VALUES('Health', 'thumbnail-health');
 INSERT INTO categories (name, thumbnail) 
