@@ -9,17 +9,39 @@ import multer from 'multer';
 // Initialise the DB connection
 const { Pool } = pg;
 // config the connection
-const pgConnectionConfig = {
-  name: 'jeremylim',
-  host: 'localhost',
-  database: 'ecommerce_platform',
-  port: 5432,
-};
-const pool = new Pool(pgConnectionConfig);
+// const pgConnectionConfig = {
+//   name: 'jeremylim',
+//   host: 'localhost',
+//   database: 'ecommerce_platform',
+//   port: 5432,
+// };
+// const pool = new Pool(pgConnectionConfig);
 
+let pgConnectionConfigs;
+
+// test to see if the env var is set. Then we know we are in Heroku
+if (process.env.DATABASE_URL) {
+  // pg will take in the entire value and use it to connect
+  pgConnectionConfigs = {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  };
+} else {
+  // this is the same value as before
+  pgConnectionConfigs = {
+    name: 'jeremylim',
+    host: 'localhost',
+    database: 'ecommerce_platform',
+    port: 5432,
+  };
+}
+const pool = new Pool(pgConnectionConfigs);
+// 
 // initialise express
 const app = express();
-const PORT = 3004;
+const PORT = proces.env.port||3004;
 
 // initialise multer: set the name of the multer upload directory
 const multerUpload = multer({ dest: 'uploads/' });
@@ -99,7 +121,7 @@ const getCartItemCount = (req, res, next) => {
     })
     .catch((error) => console.log(error.stack));
 };
-// ===========specify routes and their reqs/res==========
+// ===========Specify routes and their reqs/res==========
 
 // Route description: Home or main page
 app.get('/', checkAuth, getCartItemCount, (req, res) => {
