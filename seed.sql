@@ -14,9 +14,18 @@ VALUES('Girls school uniform', 'Dress', 10, 'maple_bear_uniform_1578371603_0e102
 
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
 VALUES('K1 enrichment book', 'For drawing', 5, 'k1-enrichmentbooks-18eabeeb0aca9fb41446fd47795dfc7b', 'k1-enrichmentbooks-1', 3,3 );
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Cinderella', 'A Disney Classic. Spend some quality time with your child by reading to them.', 26, 'cinderella_thumbnail', 'maplebear-logo', 3,3 );
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Pocahontas', 'A Disney Classic. Spend some quality time with your child by reading to them.', 26, 'pocahontas', 'maplebear-logo', 3,3 );
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Sleepy Hollow', 'A book more suitable for the Halloween season maybe? Send some chills through their spine with this one.', 26, 'sleepyHollow_thumbnail', 'maplebear-logo', 3,3 );
+
+
+
 
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
-VALUES('Maplebear face shield', 'Face shield to keep your child safe', 11, 'k1-enrichmentbooks-1', 'maplebear-logo', 2,2);
+VALUES('Maplebear face shield', 'Face shield to keep your child safe', 11, 'maplebear_faceshield2', 'maplebear-logo', 2,2);
 
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
 VALUES('Kids Cap', 'Keep your child safe from the sun with this quick-dry cap!', 25, 'maplebear_cap_1589729703_8c3db2f8_progressive', 'maplebear-logo', 1,1);
@@ -24,6 +33,37 @@ INSERT INTO products ( title, description, price, thumbnail, image, category_id,
 VALUES('Kids Cap', 'Keep your child safe from the sun with this quick-dry cap!', 25, 'maplebear_cap_1589729703_8c3db2f8_progressive', 'maplebear-logo', 1,2);
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
 VALUES('Kids Cap', 'Keep your child safe from the sun with this quick-dry cap!', 25, 'maplebear_cap_1589729703_8c3db2f8_progressive', 'maplebear-logo', 1,3);
+
+-- Toys category
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Star Wars- Toy Yoda', 'Buy me... you must. Happy, your child will be!', 45, 'yoda_thumbnail', 'yoda_img', 4,3);
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Lego Classic- 1500 pieces', 'Spur your child''s creativity with Lego! Bring imagination into reality with a variety of colors and blocks. Not recommended for children under 2 years of age.', 240, 'lego_thumbnail', 'lego_others', 4,3);
+
+-- Stationary category
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Paint brushes', 'Let your child color your life (but hopefully not walls ;)) with this set of brushes! They come in varous sizes to meet all your painting needs', 18, 'paintbrushes_thumbnail', 'maplebear-logo', 5,3);
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Art apron', 'Save on that extra time washing clothes by keeping their clothes free of paint.', 8, 'apron_thumbnail', 'maplebear-logo', 5,1);
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Art apron', 'Save on that extra time washing clothes by keeping their clothes free of paint.', 8, 'apron_thumbnail', 'maplebear-logo', 5,2);
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Art apron', 'Save on that extra time washing clothes by keeping their clothes free of paint.', 8, 'apron_thumbnail', 'maplebear-logo', 5,3);
+
+-- Parties and Special Events category
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Party hats', 'Parties and hats go like peanut butter and jelly', 6, 'partyHats_thumbnail', 'partyHats_img', 6,1);
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Party hats', 'Parties and hats go like peanut butter and jelly', 6, 'partyHats_thumbnail', 'partyHats_img', 6,2);
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Party hats', 'Parties and hats go like peanut butter and jelly', 6, 'partyHats_thumbnail', 'partyHats_img', 6,3);
+
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Party poppers', 'Need a party to go out with a bang? These will do it.', 6, 'partyPoppers_thumbnail', 'maplebear-logo', 6,4);
+INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
+VALUES('Party poppers', 'Need a party to go out with a bang? These will do it.', 6, 'partyPoppers_thumbnail', 'maplebear-logo', 6,5);
+
+
 
 -- Options
 INSERT INTO options (name)
@@ -52,7 +92,6 @@ INSERT INTO order_status (title, remarks)
 VALUES('Completed', 'Payment has been ack + item has been delivered');
 INSERT INTO order_status (title, remarks)
 VALUES('Deleted', 'This order has been deleted');
-
 
 
 
