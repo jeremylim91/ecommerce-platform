@@ -49,7 +49,7 @@ body::-webkit-scrollbar-track {
 }
 
 body::-webkit-scrollbar-thumb {
-  background: #6649b8;
+  background: #9c9c9c;
 }
 
 main {
@@ -59,7 +59,7 @@ main {
 
 .navbar {
   position: fixed;
-  background-color: var(--bg-primary);
+  background-color: #aa1d2a;
   transition: width 500ms ease;
   /* overflow: scroll; */
 }
@@ -120,6 +120,10 @@ main {
 .fa-primary,
 .fa-secondary {
   transition: var(--transition-speed);
+}
+
+svg{
+  fill: currentColor
 }
 
 .logo {
