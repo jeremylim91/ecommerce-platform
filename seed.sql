@@ -17,7 +17,7 @@ VALUES('K1 enrichment book', 'For drawing', 5, 'k1-enrichmentbooks-18eabeeb0aca9
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
 VALUES('Cinderella', 'A Disney Classic. Spend some quality time with your child by reading to them.', 26, 'cinderella_thumbnail', 'maplebear-logo', 3,3 );
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
-VALUES('Pocahontas', 'A Disney Classic. Spend some quality time with your child by reading to them.', 26, 'pocahontas', 'maplebear-logo', 3,3 );
+VALUES('Pocahontas', 'A Disney Classic. Spend some quality time with your child by reading to them.', 26, 'pocahontas_thumbnail', 'maplebear-logo', 3,3 );
 INSERT INTO products ( title, description, price, thumbnail, image, category_id, option_id)
 VALUES('Sleepy Hollow', 'A book more suitable for the Halloween season maybe? Send some chills through their spine with this one.', 26, 'sleepyHollow_thumbnail', 'maplebear-logo', 3,3 );
 
